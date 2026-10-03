@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html { scroll-behavior: smooth; }
+body { @apply bg-sky-50 text-slate-800 antialiased; }
+input[type='range'] { @apply w-full accent-navy-700; }
+.card { @apply rounded-xl border border-sky-200 bg-white shadow-sm; }
+.tip-pop { @apply pointer-events-none absolute left-1/2 top-full z-40 mt-1 hidden w-64 -translate-x-1/2 rounded-lg bg-navy-950 p-2.5 text-xs font-normal normal-case leading-snug tracking-normal text-white shadow-lg; }
+.tip:hover .tip-pop, .tip:focus-within .tip-pop { @apply block; }
