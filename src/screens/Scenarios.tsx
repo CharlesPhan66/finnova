@@ -33,7 +33,7 @@ export function Scenarios() {
 
   return (
     <div>
-      <ScreenHeader n={3} title="Run a customer scenario" question="Pick a synthetic customer, then tap through the phone at your own pace: input → risk → decision → offer → economics. Current treatment is shown next to the proposed one.">
+      <ScreenHeader n="Customer scenarios" title="Run a customer scenario" question="Pick a synthetic customer, then tap through the phone at your own pace: input → risk → decision → offer → economics. Current treatment is shown next to the proposed one.">
         <button onClick={restart} className="rounded-md bg-hred-600 px-4 py-2 text-sm font-semibold text-white hover:bg-hred-700">Restart</button>
       </ScreenHeader>
       <ScenarioPicker compact />

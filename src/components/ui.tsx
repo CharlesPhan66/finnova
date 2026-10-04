@@ -43,11 +43,11 @@ export function Card({ title, sub, right, children, className = '' }: { title?: 
   )
 }
 
-export function ScreenHeader({ n, title, question, children }: { n: number; title: string; question: string; children?: ReactNode }) {
+export function ScreenHeader({ n, title, question, children }: { n: number | string; title: string; question: string; children?: ReactNode }) {
   return (
     <div className="mb-5 flex flex-wrap items-end justify-between gap-3 border-b border-sky-200 pb-4">
       <div>
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-hred-600">Screen {n}</p>
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-hred-600">{typeof n === 'number' ? `Screen ${n}` : n}</p>
         <h2 className="text-xl font-semibold text-navy-900 sm:text-2xl">{title}</h2>
         <p className="mt-1 max-w-3xl text-sm text-slate-600">{question}</p>
       </div>

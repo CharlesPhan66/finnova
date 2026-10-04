@@ -20,14 +20,11 @@ export function AssumptionsDrawer() {
     { kind: 'assumption', label: 'Portfolio inputs on Impact screen', value: 'Approval, automatic decision rate, conversion, drop-out, default rate, volume, average loan size' },
     { kind: 'assumption', label: 'Customer profiles A–H', value: 'Synthetic customers; no real data. Income, debt and behaviour values are invented for illustration' },
     { kind: 'assumption', label: 'Current-process outcome and TAT per profile', value: 'Each TAT sits inside the case range 1.8–4.6 days; the position inside it is our choice' },
-    { kind: 'assumption', label: 'Expected-loss risk curve and EL limit', value: 'PD rises exponentially with riskier applicants; EL limit set on screen 8' },
-    { kind: 'assumption', label: 'Monitoring values and limits', value: 'All 12-week series and Green/Amber/Red limits are invented for illustration' },
   ]
   const sims: AssumptionItem[] = [
     { kind: 'sim', label: '380K as % of principal', value: 'Illustrative calculation based on case benchmark (380,000 ÷ requested amount)' },
     { kind: 'sim', label: 'PD, fraud score, confidence, repayment ability, decision, offer', value: 'Computed live by the rule + score engine for each profile' },
     { kind: 'sim', label: 'Contribution, expected loss, cost reduction, approval and automatic-decision impact', value: 'Computed from case facts and team assumptions; not HLBVN results' },
-    { kind: 'sim', label: 'Monitoring status (Green / Amber / Red)', value: 'Computed against the invented limits' },
   ]
   const groups: [string, AssumptionItem[], 'case' | 'assumption' | 'sim'][] = [
     ['Case facts', STATIC_ASSUMPTIONS, 'case'],

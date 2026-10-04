@@ -26,5 +26,5 @@ Stack: React, TypeScript, Vite, Tailwind CSS, Recharts. `vite.config.ts` sets `b
 - `src/lib/data.ts` case facts, scenarios, default assumptions
 - `src/lib/engine.ts` identity / fraud / credit / affordability / confidence and the STP-Refer-Decline policy
 - `src/lib/econ.ts` per-application economics
-- `src/screens/` the 12 screens; the assumptions register is the drawer in the header
+- `src/screens/` three tabs: Today vs Proposed (overview and current process), Customer scenarios (with the phone view), Impact & economics. The Assumptions register is the drawer in the header
 - `docs/refined-prompt.md` the refined build prompt

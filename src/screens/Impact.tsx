@@ -85,7 +85,7 @@ export function Impact() {
 
   return (
     <div>
-      <ScreenHeader n={9} title="Impact and unit economics" question="For small-ticket lending, a fixed manual review cost can consume most of the loan economics. What changes when cost and time fall, with risk still controlled?">
+      <ScreenHeader n="Impact and economics" title="Impact and unit economics" question="For small-ticket lending, a fixed manual review cost can consume most of the loan economics. What changes when cost and time fall, with risk still controlled?">
         <button onClick={resetAll} className="rounded border border-sky-200 bg-white px-3 py-1.5 text-xs hover:bg-sky-50">Reset all sliders</button>
       </ScreenHeader>
 
