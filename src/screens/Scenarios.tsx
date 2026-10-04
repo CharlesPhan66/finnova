@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { DecisionBadge, Card, LevelBadge, Metric, ScreenHeader, Tag } from '../components/ui'
+import { PhoneMock } from '../components/PhoneMock'
 import { ScenarioPicker } from '../components/ScenarioPicker'
 import { CASE } from '../lib/data'
 import { scenarioEcon } from '../lib/econ'
@@ -43,12 +44,15 @@ export function Scenarios() {
       <Card className="mt-4" title={<>Scenario {s.id}: {s.name}</>} sub={s.blurb} right={<span className="text-xs text-slate-500">Requests {vnd(s.requested)} VND over {s.tenure} months</span>}>
         <ol className="mb-4 flex flex-wrap gap-1.5" aria-label="Simulation progress">
           {STAGES.map((t, k) => (
-            <li key={t} className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition ${k < stage ? 'bg-navy-900 text-white' : k === stage ? 'animate-pulseRing bg-sky-200 text-navy-900' : 'bg-sky-100 text-slate-400'}`}>
-              <span>{k + 1}</span>{t}
+            <li key={t}>
+              <button onClick={() => setStage(k)} className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition ${k < stage ? 'bg-navy-900 text-white' : k === stage ? 'animate-pulseRing bg-sky-200 text-navy-900' : 'bg-sky-100 text-slate-400 hover:text-slate-600'}`}>
+                <span>{k + 1}</span>{t}
+              </button>
             </li>
           ))}
         </ol>
 
+        <div className="grid gap-5 xl:grid-cols-[1fr_300px]">
         <div className="space-y-3">
           {stage >= 0 && (
             <div className="grid gap-3 md:grid-cols-2">
@@ -123,6 +127,12 @@ export function Scenarios() {
               </Pane>
             </div>
           )}
+        </div>
+        <div className="xl:sticky xl:top-20 xl:self-start">
+          <p className="mb-2 text-center text-xs font-semibold text-navy-900">What the customer sees</p>
+          <PhoneMock s={s} r={r} step={Math.min(stage, 4)} />
+          <p className="mt-2 text-center text-[11px] text-slate-500">Illustrative screens <Tag kind="sim" />. Follows the steps on the left.</p>
+        </div>
         </div>
         <p className="mt-3 text-[11px] text-slate-500">Case range for TAT is {CASE.tatMinDays}–{CASE.tatMaxDays} days <Tag kind="case" />; position inside the range, the profile and all outputs are simulated.</p>
       </Card>
