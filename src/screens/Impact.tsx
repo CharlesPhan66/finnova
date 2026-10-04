@@ -44,6 +44,12 @@ export function Impact() {
   const [defC, setDefC] = useState(4)
   const [defP, setDefP] = useState(4.5)
 
+  const resetAll = () => {
+    setEc(DEFAULT_ECON)
+    setAmount(10_000_000); setApr(18); setN(1000)
+    setAppC(40); setAppP(52); setConvC(55); setConvP(75); setStp(40); setDefC(4); setDefP(4.5)
+  }
+
   const stpEff = Math.min(stp, appP)
   const reviewP = Math.min(100 - stpEff, appP - stpEff + 10)
   const refCost = CASE.costPerApp * (ec.reviewCostPct / 100)
@@ -80,7 +86,7 @@ export function Impact() {
   return (
     <div>
       <ScreenHeader n={9} title="Impact and unit economics" question="For small-ticket lending, a fixed manual review cost can consume most of the loan economics. What changes when cost and time fall, with risk still controlled?">
-        <button onClick={() => setEc({ ...ec, proposedCost: DEFAULT_ECON.proposedCost })} className="rounded border border-sky-200 bg-white px-3 py-1.5 text-xs hover:bg-sky-50">Reset cost X</button>
+        <button onClick={resetAll} className="rounded border border-sky-200 bg-white px-3 py-1.5 text-xs hover:bg-sky-50">Reset all sliders</button>
       </ScreenHeader>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -95,7 +101,7 @@ export function Impact() {
           <div className="space-y-3.5">
             <Slider label="Average loan amount" value={amount} min={CASE.minLoan} max={CASE.maxLoan} step={100_000} onChange={setAmount} fmt={(v) => vnd(v)} />
             <Slider label="Revenue: interest rate (APR)" tip="Flat annuity pricing over 12 months. Not an HLBVN rate." value={apr} min={8} max={36} step={0.5} onChange={setApr} fmt={(v) => `${v}%`} />
-            <Slider label="Proposed automated cost (X)" tip="Cost per application for an automated decision. The 380K benchmark applies to centralized manual review only." value={ec.proposedCost} min={10_000} max={380_000} step={5_000} onChange={(v) => setEc({ ...ec, proposedCost: v })} fmt={(v) => `${vnd(v)}`} />
+            <Slider label="Proposed automated cost (X)" tip="Cost per application for an automated decision. The 380K benchmark applies to centralized manual review only." value={ec.proposedCost} min={10_000} max={380_000} step={1_000} onChange={(v) => setEc({ ...ec, proposedCost: v })} fmt={(v) => `${vnd(v)}`} />
             <Slider label="Review cost (% of 380K)" value={ec.reviewCostPct} min={10} max={100} step={5} onChange={(v) => setEc({ ...ec, reviewCostPct: v })} fmt={(v) => `${v}%`} />
             <Slider label="Funding cost (p.a.)" value={ec.funding} min={2} max={15} step={0.25} onChange={(v) => setEc({ ...ec, funding: v })} fmt={(v) => `${v}%`} />
             <Slider label="LGD" value={ec.lgd} min={20} max={100} step={1} onChange={(v) => setEc({ ...ec, lgd: v })} fmt={(v) => `${v}%`} />
