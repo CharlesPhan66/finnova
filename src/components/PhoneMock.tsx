@@ -31,8 +31,8 @@ function Top({ title }: { title: string }) {
   )
 }
 
-const Btn = ({ children, tone = 'navy' }: { children: ReactNode; tone?: 'navy' | 'ghost' }) => (
-  <div className={`mt-auto rounded-lg py-2.5 text-center text-sm font-semibold ${tone === 'navy' ? 'bg-navy-900 text-white' : 'border border-sky-200 text-navy-800'}`}>{children}</div>
+const Btn = ({ children, onClick, tone = 'navy' }: { children: ReactNode; onClick: () => void; tone?: 'navy' | 'ghost' }) => (
+  <button onClick={onClick} className={`mt-auto w-full rounded-lg py-2.5 text-center text-sm font-semibold transition active:scale-[0.98] ${tone === 'navy' ? 'bg-navy-900 text-white hover:bg-navy-800' : 'border border-sky-300 text-navy-800 hover:bg-sky-50'}`}>{children}</button>
 )
 
 function declineText(r: Result): { title: string; body: string } {
@@ -44,7 +44,7 @@ function declineText(r: Result): { title: string; body: string } {
 }
 
 // step 0..4 matches the five simulation stages
-export function PhoneMock({ s, r, step }: { s: Scenario; r: Result; step: number }) {
+export function PhoneMock({ s, r, step, onNext, onRestart }: { s: Scenario; r: Result; step: number; onNext: () => void; onRestart: () => void }) {
   const i = s.inputs
   const sources = ['Your HLB account activity', i.platformIncome ? 'Platform income' : '', i.ecommerceSales ? 'Online shop sales' : '', 'E-wallet activity'].filter(Boolean)
   const checks = ['Identity check', 'Fraud check', 'Credit and cash-flow check', 'Can you afford the payments?']
@@ -69,7 +69,7 @@ export function PhoneMock({ s, r, step }: { s: Scenario; r: Result; step: number
           ))}
         </ul>
         <p className="mt-2 text-[10px] text-slate-500">You choose what to share. We use it only for this decision.</p>
-        <Btn>I agree, continue</Btn>
+        <Btn onClick={onNext}>I agree, continue</Btn>
       </>
     )
   } else if (step === 1) {
@@ -86,16 +86,17 @@ export function PhoneMock({ s, r, step }: { s: Scenario; r: Result; step: number
           ))}
         </ul>
         <p className="mt-4 rounded bg-sky-50 p-2 text-[11px] text-slate-600">The customer sees simple steps. Fraud and credit scores are never shown on the phone.</p>
+        <Btn onClick={onNext}>See my result</Btn>
       </>
     )
   } else if (step === 2) {
     if (r.decision === 'Approve') {
-      body = (<><Top title="Good news" /><div className="rounded-xl bg-ok-50 p-4 text-center"><p className="text-3xl text-ok-600">✓</p><p className="mt-1 text-base font-bold text-ok-600">You are approved</p><p className="mt-1 text-xs text-slate-600">Decision in about a few minutes, with no documents to upload.</p></div><Btn>See my offer</Btn></>)
+      body = (<><Top title="Good news" /><div className="rounded-xl bg-ok-50 p-4 text-center"><p className="text-3xl text-ok-600">✓</p><p className="mt-1 text-base font-bold text-ok-600">You are approved</p><p className="mt-1 text-xs text-slate-600">Decision in about a few minutes, with no documents to upload.</p></div><Btn onClick={onNext}>See my offer</Btn></>)
     } else if (r.decision === 'Review') {
-      body = (<><Top title="We are reviewing" /><div className="rounded-xl bg-warn-50 p-4 text-center"><p className="text-3xl text-warn-600">…</p><p className="mt-1 text-base font-bold text-warn-600">A specialist is looking at your application</p><p className="mt-1 text-xs text-slate-600">We will tell you the result as soon as possible. You do not need to upload anything yet.</p></div><Btn tone="ghost">Back to shop</Btn></>)
+      body = (<><Top title="We are reviewing" /><div className="rounded-xl bg-warn-50 p-4 text-center"><p className="text-3xl text-warn-600">…</p><p className="mt-1 text-base font-bold text-warn-600">A specialist is looking at your application</p><p className="mt-1 text-xs text-slate-600">We will tell you the result as soon as possible. You do not need to upload anything yet.</p></div><Btn tone="ghost" onClick={onNext}>Continue</Btn></>)
     } else {
       const t = declineText(r)
-      body = (<><Top title="Your application" /><div className="rounded-xl bg-hred-50 p-4"><p className="text-sm font-bold text-hred-600">{t.title}</p><p className="mt-1 text-xs text-slate-700">{t.body}</p></div><Btn tone="ghost">Choose another way to pay</Btn></>)
+      body = (<><Top title="Your application" /><div className="rounded-xl bg-hred-50 p-4"><p className="text-sm font-bold text-hred-600">{t.title}</p><p className="mt-1 text-xs text-slate-700">{t.body}</p></div><Btn tone="ghost" onClick={onNext}>Continue</Btn></>)
     }
   } else if (step === 3) {
     if (offer) {
@@ -113,19 +114,19 @@ export function PhoneMock({ s, r, step }: { s: Scenario; r: Result; step: number
             <div className="flex justify-between"><dt className="text-slate-500">Rate (illustrative)</dt><dd className="font-semibold">{offer.apr}% a year</dd></div>
           </dl>
           <p className="mt-2 text-[10px] text-slate-500">{offer.note}{r.decision === 'Review' ? ' Final offer after review.' : ''}</p>
-          <Btn>{r.decision === 'Approve' ? 'Accept offer' : 'OK'}</Btn>
+          <Btn onClick={onNext}>{r.decision === 'Approve' ? 'Accept offer' : 'OK'}</Btn>
         </>
       )
     } else {
-      body = (<><Top title="Other options" /><p className="text-xs text-slate-700">No loan offer this time. Pay with another method, or contact us for help.</p><Btn tone="ghost">Contact support</Btn></>)
+      body = (<><Top title="Other options" /><p className="text-xs text-slate-700">No loan offer this time. Pay with another method, or contact us for help.</p><Btn tone="ghost" onClick={onNext}>Continue</Btn></>)
     }
   } else {
     if (r.decision === 'Approve' && offer) {
-      body = (<><Top title="All done" /><div className="rounded-xl bg-ok-50 p-4 text-center"><p className="text-3xl text-ok-600">✓</p><p className="mt-1 text-base font-bold text-ok-600">Purchase confirmed</p><p className="mt-1 text-xs text-slate-600">{vnd(offer.amount)} VND is paid to the shop. Your first payment is due next month.</p></div><Btn tone="ghost">View my loan</Btn></>)
+      body = (<><Top title="All done" /><div className="rounded-xl bg-ok-50 p-4 text-center"><p className="text-3xl text-ok-600">✓</p><p className="mt-1 text-base font-bold text-ok-600">Purchase confirmed</p><p className="mt-1 text-xs text-slate-600">{vnd(offer.amount)} VND is paid to the shop. Your first payment is due next month.</p></div><Btn tone="ghost" onClick={onRestart}>Start again</Btn></>)
     } else if (r.decision === 'Review') {
-      body = (<><Top title="Next" /><p className="text-xs text-slate-700">If the officer approves, you will get a message and can accept the offer. Your purchase waits until then.</p><Btn tone="ghost">Back to shop</Btn></>)
+      body = (<><Top title="Next" /><p className="text-xs text-slate-700">If the officer approves, you will get a message and can accept the offer. Your purchase waits until then.</p><Btn tone="ghost" onClick={onRestart}>Start again</Btn></>)
     } else {
-      body = (<><Top title="Next" /><p className="text-xs text-slate-700">No loan was made, and nothing is owed. You can try again later or pay another way.</p><Btn tone="ghost">Back to shop</Btn></>)
+      body = (<><Top title="Next" /><p className="text-xs text-slate-700">No loan was made, and nothing is owed. You can try again later or pay another way.</p><Btn tone="ghost" onClick={onRestart}>Start again</Btn></>)
     }
   }
   return <Frame step={step}>{body}</Frame>

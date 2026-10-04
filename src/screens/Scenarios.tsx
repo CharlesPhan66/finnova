@@ -20,23 +20,21 @@ function Pane({ title, tone, children }: { title: string; tone: 'red' | 'blue'; 
 
 export function Scenarios() {
   const { scenario: s, result: r, ec } = useStore()
-  const [stage, setStage] = useState(5)
-  const [run, setRun] = useState(0)
+  const [stage, setStage] = useState(0)
   const e = scenarioEcon(s, r, ec)
 
-  useEffect(() => {
-    setStage(0)
-    const id = window.setInterval(() => setStage((v) => { if (v >= 5) { window.clearInterval(id); return 5 } return v + 1 }), 850)
-    return () => window.clearInterval(id)
-  }, [s.id, run])
+  // Start from the first step whenever a different customer is picked
+  useEffect(() => { setStage(0) }, [s.id])
+  const next = () => setStage((v) => Math.min(4, v + 1))
+  const restart = () => setStage(0)
 
   const i = s.inputs
   const curBad = s.current.outcome !== 'Approve'
 
   return (
     <div>
-      <ScreenHeader n={3} title="Run a customer scenario" question="Pick a synthetic customer and watch input → risk → decision → offer → economics, current treatment against proposed.">
-        <button onClick={() => setRun((v) => v + 1)} className="rounded-md bg-hred-600 px-4 py-2 text-sm font-semibold text-white hover:bg-hred-700">Run simulation</button>
+      <ScreenHeader n={3} title="Run a customer scenario" question="Pick a synthetic customer, then tap through the phone at your own pace: input → risk → decision → offer → economics. Current treatment is shown next to the proposed one.">
+        <button onClick={restart} className="rounded-md bg-hred-600 px-4 py-2 text-sm font-semibold text-white hover:bg-hred-700">Restart</button>
       </ScreenHeader>
       <ScenarioPicker compact />
       <p className="mt-2 text-xs text-slate-500">Dot colour = proposed-engine outcome with current thresholds. Customers are synthetic <Tag kind="assumption" />.</p>
@@ -130,8 +128,8 @@ export function Scenarios() {
         </div>
         <div className="xl:sticky xl:top-20 xl:self-start">
           <p className="mb-2 text-center text-xs font-semibold text-navy-900">What the customer sees</p>
-          <PhoneMock s={s} r={r} step={Math.min(stage, 4)} />
-          <p className="mt-2 text-center text-[11px] text-slate-500">Illustrative screens <Tag kind="sim" />. Follows the steps on the left.</p>
+          <PhoneMock s={s} r={r} step={stage} onNext={next} onRestart={restart} />
+          <p className="mt-2 text-center text-[11px] text-slate-500">Tap the buttons on the phone to move to the next step. The panels on the left follow.</p>
         </div>
         </div>
         <p className="mt-3 text-[11px] text-slate-500">Case range for TAT is {CASE.tatMinDays}–{CASE.tatMaxDays} days <Tag kind="case" />; position inside the range, the profile and all outputs are simulated.</p>

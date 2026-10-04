@@ -32,7 +32,7 @@ const NAV: { id: ScreenId; label: string }[] = [
 const DEMO: { screen: ScreenId; scenario?: string; title: string; say: string }[] = [
   { screen: 'hero', title: '1. The mechanism', say: 'Same customer, two journeys. Today: documents, manual checks, 1.8–4.6 days, 380K. Proposed: consent, digital data, engine, near-real-time.' },
   { screen: 'current', scenario: 'C', title: '2. Why today is costly', say: 'Pick a small loan. The fixed 380K is a large share of principal, and a gig worker has little a document review can use.' },
-  { screen: 'scenarios', scenario: 'C', title: '3. Gig worker, both ways', say: 'Press Run. Current treatment likely declines; proposed uses platform cash-flow and approves straight through.' },
+  { screen: 'scenarios', scenario: 'C', title: '3. Gig worker, both ways', say: 'Tap through the phone at your own pace. Current treatment likely declines; proposed uses platform cash-flow and approves automatically.' },
   { screen: 'engine', scenario: 'C', title: '4. Inside the engine', say: 'Identity, fraud and credit risk are separate. Repayment ability and confidence decide if it can be approved automatically.' },
   { screen: 'impact', title: '5. Economics', say: 'Cost per application and contribution, current vs proposed. Move the cost slider to show sensitivity.' },
   { screen: 'scenarios', scenario: 'F', title: '6. Risky customer', say: 'Credit looks fine but fraud signals are high: Decline. The solution is not "approve more people".' },
@@ -59,8 +59,8 @@ function Shell() {
         <div className="flex items-center gap-3 px-4 py-2.5">
           <button className="rounded bg-white/10 px-2 py-1 text-sm lg:hidden" onClick={() => setMenu(!menu)} aria-label="Toggle menu" aria-expanded={menu}>Menu</button>
           <div className="flex items-center gap-2.5">
-            <span className="flex h-9 items-center rounded bg-white px-2">
-              <img src={`${import.meta.env.BASE_URL}hlb-logo-horizontal.png`} alt="Hong Leong Bank" className="h-6 w-auto sm:h-7" />
+            <span className="flex h-10 w-10 items-center justify-center rounded bg-white p-1">
+              <img src={`${import.meta.env.BASE_URL}hlb-logo-icon.png`} alt="Hong Leong Bank" className="h-full w-auto" />
             </span>
             <div className="leading-tight">
               <h1 className="text-sm font-semibold sm:text-base">Point-of-Purchase Underwriting Simulation</h1>
