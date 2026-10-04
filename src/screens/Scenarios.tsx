@@ -29,7 +29,9 @@ export function Scenarios() {
   const restart = () => setStage(0)
 
   const i = s.inputs
-  const curBad = s.current.outcome !== 'Approve'
+  // Colour follows the decision type: green Approve, grey Review, red Decline
+  const curTone: 'green' | 'grey' | 'red' = s.current.outcome.startsWith('Approve') ? 'green' : s.current.outcome.includes('ecline') ? 'red' : 'grey'
+  const curText = { green: 'text-ok-600', grey: 'text-slate-500', red: 'text-hred-600' }[curTone]
 
   return (
     <div>
@@ -87,7 +89,7 @@ export function Scenarios() {
           {stage >= 2 && (
             <div className="grid gap-3 md:grid-cols-2">
               <Pane title="Current: decision" tone="red">
-                <p className={`text-base font-semibold ${curBad ? 'text-hred-600' : 'text-ok-600'}`}>{s.current.outcome}</p>
+                <p className={`text-base font-semibold ${curText}`}>{s.current.outcome}</p>
                 <p className="text-xs text-slate-600">after ~{s.current.tatDays.toFixed(1)} business days <Tag kind="sim" /></p>
               </Pane>
               <Pane title="Proposed: decision" tone="blue">
@@ -136,8 +138,8 @@ export function Scenarios() {
       </Card>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Metric label="Current decision" value={s.current.outcome} tone={curBad ? 'red' : 'green'} tag="sim" />
-        <Metric label="Proposed decision" value={r.decision === 'Approve' ? 'Approve' : r.decision === 'Review' ? 'Review' : 'Decline'} tone={r.decision === 'Approve' ? 'green' : r.decision === 'Review' ? 'amber' : 'red'} tag="sim" />
+        <Metric label="Current decision" value={s.current.outcome} tone={curTone} tag="sim" />
+        <Metric label="Proposed decision" value={r.decision === 'Approve' ? 'Approve' : r.decision === 'Review' ? 'Review' : 'Decline'} tone={r.decision === 'Approve' ? 'green' : r.decision === 'Review' ? 'grey' : 'red'} tag="sim" />
         <Metric label="Time to decision" value={`${s.current.tatDays.toFixed(1)} d → < ${ec.proposedMinutes} min`} tag="sim" />
         <Metric label="Unit cost" value={`380K → ${vnd(r.decision === 'Review' ? ec.proposedCost + CASE.costPerApp * ec.reviewCostPct / 100 : ec.proposedCost)}`} tag="assumption" tip="Current cost is the case benchmark. Proposed cost is an adjustable team assumption (Impact screen)." />
       </div>

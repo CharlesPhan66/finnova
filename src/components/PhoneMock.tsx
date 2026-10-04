@@ -80,7 +80,7 @@ export function PhoneMock({ s, r, step, onNext, onRestart }: { s: Scenario; r: R
         <ul className="space-y-2.5">
           {checks.map((c, k) => (
             <li key={c} className="flex items-center gap-2 text-xs text-slate-700">
-              <span className={`flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-bold text-white ${r.stopped && k > 0 ? 'bg-slate-300' : ok[k] ? 'bg-ok-600' : 'bg-warn-600'}`}>{r.stopped && k > 0 ? '·' : ok[k] ? '✓' : '!'}</span>
+              <span className={`flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-bold text-white ${r.stopped && k > 0 ? 'bg-slate-300' : ok[k] ? 'bg-ok-600' : 'bg-slate-500'}`}>{r.stopped && k > 0 ? '·' : ok[k] ? '✓' : '!'}</span>
               {c}
             </li>
           ))}
@@ -93,7 +93,7 @@ export function PhoneMock({ s, r, step, onNext, onRestart }: { s: Scenario; r: R
     if (r.decision === 'Approve') {
       body = (<><Top title="Good news" /><div className="rounded-xl bg-ok-50 p-4 text-center"><p className="text-3xl text-ok-600">✓</p><p className="mt-1 text-base font-bold text-ok-600">You are approved</p><p className="mt-1 text-xs text-slate-600">Decision in about a few minutes, with no documents to upload.</p></div><Btn onClick={onNext}>See my offer</Btn></>)
     } else if (r.decision === 'Review') {
-      body = (<><Top title="We are reviewing" /><div className="rounded-xl bg-warn-50 p-4 text-center"><p className="text-3xl text-warn-600">…</p><p className="mt-1 text-base font-bold text-warn-600">A specialist is looking at your application</p><p className="mt-1 text-xs text-slate-600">We will tell you the result as soon as possible. You do not need to upload anything yet.</p></div><Btn tone="ghost" onClick={onNext}>Continue</Btn></>)
+      body = (<><Top title="We are reviewing" /><div className="rounded-xl bg-slate-100 p-4 text-center"><p className="text-3xl text-slate-500">…</p><p className="mt-1 text-base font-bold text-slate-600">A specialist is looking at your application</p><p className="mt-1 text-xs text-slate-600">We will tell you the result as soon as possible. You do not need to upload anything yet.</p></div><Btn tone="ghost" onClick={onNext}>Continue</Btn></>)
     } else {
       const t = declineText(r)
       body = (<><Top title="Your application" /><div className="rounded-xl bg-hred-50 p-4"><p className="text-sm font-bold text-hred-600">{t.title}</p><p className="mt-1 text-xs text-slate-700">{t.body}</p></div><Btn tone="ghost" onClick={onNext}>Continue</Btn></>)
