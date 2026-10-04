@@ -8,19 +8,19 @@ type St = 'GREEN' | 'AMBER' | 'RED'
 interface M { k: string; unit: string; base: number; amber: number; red: number; dir: 'high' | 'low'; tip: string; drift?: number; fraud?: number; d: number }
 
 const METRICS: M[] = [
-  { k: 'Approval rate', unit: '%', base: 52, amber: 60, red: 66, dir: 'high', tip: 'Watched from above: a rising approval rate without matching risk data may signal loosening.', drift: 1.1, d: 0 },
-  { k: 'STP rate', unit: '%', base: 40, amber: 34, red: 27, dir: 'low', tip: 'Share decided with no human touch.', fraud: 0.8, d: 0 },
-  { k: 'Manual review rate', unit: '%', base: 22, amber: 30, red: 38, dir: 'high', tip: 'Share referred to officers.', fraud: 1.5, drift: 1.3, d: 0 },
-  { k: 'Decision TAT', unit: 'min', base: 5, amber: 10, red: 20, dir: 'high', tip: 'Median time to decision for automated applications.', fraud: 1.2, d: 1 },
-  { k: 'Default rate', unit: '%', base: 4.5, amber: 5.5, red: 7, dir: 'high', tip: 'Early-stage default on new booking cohorts.', drift: 1.4, d: 1 },
-  { k: 'NPL ratio', unit: '%', base: 2.8, amber: 3.5, red: 5, dir: 'high', tip: 'Non-performing loans as share of the book.', drift: 1.3, d: 1 },
-  { k: 'Expected loss', unit: '% of disb.', base: 1.7, amber: 2.0, red: 3.0, dir: 'high', tip: 'Compared with the risk-appetite limit set on screen 8.', drift: 1.5, d: 2 },
-  { k: 'Fraud rate', unit: '% of apps', base: 0.6, amber: 0.9, red: 1.5, dir: 'high', tip: 'Confirmed fraudulent applications.', fraud: 3, d: 2 },
-  { k: 'False positives', unit: '% good declined', base: 1.8, amber: 2.5, red: 4, dir: 'high', tip: 'Genuine customers wrongly blocked by fraud or credit rules.', fraud: 1.5, d: 1 },
-  { k: 'False negatives', unit: '% fraud passed', base: 0.2, amber: 0.35, red: 0.6, dir: 'high', tip: 'Fraud that passed the screen, found later.', fraud: 3, d: 2 },
-  { k: 'Model drift (PSI)', unit: 'index', base: 0.06, amber: 0.1, red: 0.25, dir: 'high', tip: 'Population stability of model scores against the training period.', drift: 4.5, d: 2 },
-  { k: 'Data drift (PSI)', unit: 'index', base: 0.05, amber: 0.1, red: 0.25, dir: 'high', tip: 'Change in input data distributions, e.g. a partner feed changing.', drift: 5.5, d: 2 },
-  { k: 'Override rate', unit: '% of referrals', base: 6, amber: 10, red: 15, dir: 'high', tip: 'Officers overriding the engine recommendation. High means the model and the humans disagree.', drift: 1.9, d: 1 },
+  { k: 'Approval rate', unit: '%', base: 52, amber: 60, red: 66, dir: 'high', tip: 'Watch for a rise. Approving more without better risk data can mean the rules are getting too loose.', drift: 1.1, d: 0 },
+  { k: 'Automatic decision rate', unit: '%', base: 40, amber: 34, red: 27, dir: 'low', tip: 'Share of applications decided with no person involved (also called STP, straight-through processing).', fraud: 0.8, d: 0 },
+  { k: 'Manual review rate', unit: '%', base: 22, amber: 30, red: 38, dir: 'high', tip: 'Share of applications sent to a credit officer.', fraud: 1.5, drift: 1.3, d: 0 },
+  { k: 'Decision TAT', unit: 'min', base: 5, amber: 10, red: 20, dir: 'high', tip: 'Typical time to reach a decision for automatic applications.', fraud: 1.2, d: 1 },
+  { k: 'Default rate', unit: '%', base: 4.5, amber: 5.5, red: 7, dir: 'high', tip: 'Customers who stop paying early, among newly approved loans.', drift: 1.4, d: 1 },
+  { k: 'NPL ratio', unit: '%', base: 2.8, amber: 3.5, red: 5, dir: 'high', tip: 'Bad loans as a share of all loans.', drift: 1.3, d: 1 },
+  { k: 'Expected loss', unit: '% paid out', base: 1.7, amber: 2.0, red: 3.0, dir: 'high', tip: 'Compared with the loss limit set on screen 8.', drift: 1.5, d: 2 },
+  { k: 'Fraud rate', unit: '% of apps', base: 0.6, amber: 0.9, red: 1.5, dir: 'high', tip: 'Applications confirmed as fraud.', fraud: 3, d: 2 },
+  { k: 'False positives', unit: '% good declined', base: 1.8, amber: 2.5, red: 4, dir: 'high', tip: 'Good customers wrongly declined by fraud or credit rules.', fraud: 1.5, d: 1 },
+  { k: 'False negatives', unit: '% fraud passed', base: 0.2, amber: 0.35, red: 0.6, dir: 'high', tip: 'Fraud that passed the checks and was found later.', fraud: 3, d: 2 },
+  { k: 'Model drift (PSI)', unit: 'index', base: 0.06, amber: 0.1, red: 0.25, dir: 'high', tip: 'How much the scores have shifted compared with the period the scorecard was built on.', drift: 4.5, d: 2 },
+  { k: 'Data drift (PSI)', unit: 'index', base: 0.05, amber: 0.1, red: 0.25, dir: 'high', tip: 'How much the incoming data has changed, for example when a partner changes its data.', drift: 5.5, d: 2 },
+  { k: 'Override rate', unit: '% of reviews', base: 6, amber: 10, red: 15, dir: 'high', tip: 'How often officers change the engine\'s recommendation. A high number means people and the engine disagree.', drift: 1.9, d: 1 },
 ]
 
 const status = (m: M, v: number): St => {
@@ -85,7 +85,7 @@ export function Monitoring() {
           </Card>
         ))}
       </div>
-      <p className="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-slate-500"><Tag kind="sim" /> 12-week series and limits are invented to show the warning logic. <b>Green</b> within policy · <b>Amber</b> needs review · <b>Red</b> risk threshold breached, with a defined escalation (pause STP for the affected segment, tighten thresholds, revalidate the model).</p>
+      <p className="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-slate-500"><Tag kind="sim" /> The 12-week numbers and limits are made up to show how the warnings work. <b>Green</b> within policy · <b>Amber</b> needs review · <b>Red</b> risk threshold breached, with a set response (stop automatic approvals for the affected group, tighten the limits, re-check the scorecard).</p>
     </div>
   )
 }

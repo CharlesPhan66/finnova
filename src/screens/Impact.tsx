@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import { Bar, BarChart, CartesianGrid, Cell, Legend, ResponsiveContainer, Tooltip as RTip, XAxis, YAxis } from 'recharts'
 import { Card, Metric, ScreenHeader, Slider, Tag, Tip } from '../components/ui'
-import { CASE, type Kind } from '../lib/data'
+import { CASE, DEFAULT_ECON, type Kind } from '../lib/data'
 import { contribution } from '../lib/engine'
 import { vnd } from '../lib/format'
 import { useStore } from '../lib/store'
@@ -44,9 +44,15 @@ export function Impact() {
   const [defC, setDefC] = useState(4)
   const [defP, setDefP] = useState(4.5)
 
+  const resetAll = () => {
+    setEc(DEFAULT_ECON)
+    setAmount(10_000_000); setApr(18); setN(1000)
+    setAppC(40); setAppP(52); setConvC(55); setConvP(75); setStp(40); setDefC(4); setDefP(4.5)
+  }
+
   const stpEff = Math.min(stp, appP)
   const reviewP = Math.min(100 - stpEff, appP - stpEff + 10)
-  const refCost = CASE.costPerApp * (ec.referralCostPct / 100)
+  const refCost = CASE.costPerApp * (ec.reviewCostPct / 100)
   const costP = ec.proposedCost + (reviewP / 100) * refCost
   const base = { n, amount, apr, tenure: 12 }
   const cur: P = { ...base, approval: appC, conversion: convC, stp: 0, defaultRate: defC, cost: CASE.costPerApp, review: 100, tatDays: 3.2 }
@@ -65,28 +71,28 @@ export function Impact() {
   ]
 
   const rows: [string, ReactNode, ReactNode, Kind, string][] = [
-    ['Decision TAT', `${CASE.tatMinDays}–${CASE.tatMaxDays} business days`, `Minutes (assumed ${ec.proposedMinutes} min)`, 'assumption', 'Current is the case fact range. Proposed is an adjustable assumption, not an HLBVN target.'],
-    ['Cost per application', `${vnd(c.processing / n)} VND`, `${vnd(costP)} VND`, 'assumption', 'Current = case benchmark. Proposed = automated cost X + referral share × reduced review cost.'],
-    ['STP rate', '0% (all manually reviewed)', `${stpEff}%`, 'assumption', 'Share of applications decided with no human touch.'],
-    ['Manual review rate', '100%', `${reviewP}%`, 'sim', 'Approved after review (approval − STP) plus 10 points referred then declined. Assumption-driven.'],
-    ['Approval rate', `${appC}%`, `${appP}%`, 'assumption', 'Proposed approval rises only because thin-file customers become assessable; risk limits still apply.'],
-    ['Customer abandonment', `${100 - convC}%`, `${100 - convP}%`, 'assumption', 'Share of approved customers who do not complete the purchase loan. Faster decisions assumed to reduce it.'],
-    ['Expected loss (% of disbursement)', `${c.elPct.toFixed(2)}%`, `${p.elPct.toFixed(2)}%`, 'sim', 'Default rate × LGD.'],
-    ['Default rate', `${defC}%`, `${defP}%`, 'assumption', 'Proposed is set slightly higher to reflect thin-file customers; adjust to test.'],
-    ['Loan disbursement', `${vnd(c.disb)} VND`, `${vnd(p.disb)} VND`, 'sim', 'Booked loans × average loan amount.'],
+    ['Decision TAT', `${CASE.tatMinDays}–${CASE.tatMaxDays} business days`, `Under ${ec.proposedMinutes} minutes (target)`, 'assumption', 'Current is the case fact range. Proposed is an adjustable assumption, not an HLBVN target.'],
+    ['Cost per application', `${vnd(c.processing / n)} VND`, `${vnd(costP)} VND`, 'assumption', 'Current = case benchmark. Proposed = automated cost X + review share × reduced review cost.'],
+    ['Automatic decision rate (STP)', '0% (all manually reviewed)', `${stpEff}%`, 'assumption', 'Share of applications decided with no person involved.'],
+    ['Manual review rate', '100%', `${reviewP}%`, 'sim', 'Approved after review (approval − STP) plus 10 points sent to review then declined. Assumption-driven.'],
+    ['Approval rate', `${appC}%`, `${appP}%`, 'assumption', 'Proposed approval rises only because customers with little credit history become assessable; risk limits still apply.'],
+    ['Customers who drop out', `${100 - convC}%`, `${100 - convP}%`, 'assumption', 'Share of approved customers who do not complete the purchase loan. Faster decisions assumed to reduce it.'],
+    ['Expected loss (% of loans paid out)', `${c.elPct.toFixed(2)}%`, `${p.elPct.toFixed(2)}%`, 'sim', 'Default rate × LGD.'],
+    ['Default rate', `${defC}%`, `${defP}%`, 'assumption', 'Proposed is set slightly higher to reflect customers with little credit history; adjust to test.'],
+    ['Loans paid out', `${vnd(c.disb)} VND`, `${vnd(p.disb)} VND`, 'sim', 'Booked loans × average loan amount.'],
     ['Contribution', `${vnd(c.net)} VND`, `${vnd(p.net)} VND`, 'sim', 'Revenue − funding − processing − expected credit loss.'],
   ]
 
   return (
     <div>
       <ScreenHeader n={9} title="Impact and unit economics" question="For small-ticket lending, a fixed manual review cost can consume most of the loan economics. What changes when cost and time fall, with risk still controlled?">
-        <button onClick={() => setEc({ ...ec, proposedCost: 60_000 })} className="rounded border border-sky-200 bg-white px-3 py-1.5 text-xs hover:bg-sky-50">Reset cost X</button>
+        <button onClick={resetAll} className="rounded border border-sky-200 bg-white px-3 py-1.5 text-xs hover:bg-sky-50">Reset all sliders</button>
       </ScreenHeader>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Metric label="Contribution per application" value={`${vnd(c.perApp)} → ${vnd(p.perApp)}`} tag="sim" tone={p.perApp >= 0 ? 'green' : 'red'} tip="Contribution ÷ applications, current then proposed." />
         <Metric label="Cost per application" value={`${vnd(CASE.costPerApp)} → ${vnd(costP)}`} tag="assumption" tip="380K is the case benchmark; the proposed figure is an assumption." />
-        <Metric label="Cost reduction" value={`${((1 - costP / CASE.costPerApp) * 100).toFixed(0)}%`} tag="sim" tone="green" />
+        <Metric label="Cost reduction" value={`${((1 - costP / CASE.costPerApp) * 100).toFixed(0)}%`} tag="sim" tone="green" sub="Target: 65% (about 133K per application)" tip="Target from the one-pager: average cost per application falls 65% from the 380K benchmark. The automated cost X is set so the default matches this target." />
         <Metric label="Break-even average ticket" value={`${beC ? vnd(beC) : '> 90.1M'} → ${beP ? vnd(beP) : '> 90.1M'}`} tag="sim" tip="Smallest average loan size at which total contribution is not negative, with the sliders as set." sub="Current → proposed" />
       </div>
 
@@ -95,14 +101,14 @@ export function Impact() {
           <div className="space-y-3.5">
             <Slider label="Average loan amount" value={amount} min={CASE.minLoan} max={CASE.maxLoan} step={100_000} onChange={setAmount} fmt={(v) => vnd(v)} />
             <Slider label="Revenue: interest rate (APR)" tip="Flat annuity pricing over 12 months. Not an HLBVN rate." value={apr} min={8} max={36} step={0.5} onChange={setApr} fmt={(v) => `${v}%`} />
-            <Slider label="Proposed automated cost (X)" tip="Cost per application for an automated decision. The 380K benchmark applies to centralized manual review only." value={ec.proposedCost} min={10_000} max={380_000} step={5_000} onChange={(v) => setEc({ ...ec, proposedCost: v })} fmt={(v) => `${vnd(v)}`} />
-            <Slider label="Referral review cost (% of 380K)" value={ec.referralCostPct} min={10} max={100} step={5} onChange={(v) => setEc({ ...ec, referralCostPct: v })} fmt={(v) => `${v}%`} />
+            <Slider label="Proposed automated cost (X)" tip="Cost per application for an automated decision. The 380K benchmark applies to centralized manual review only." value={ec.proposedCost} min={10_000} max={380_000} step={1_000} onChange={(v) => setEc({ ...ec, proposedCost: v })} fmt={(v) => `${vnd(v)}`} />
+            <Slider label="Review cost (% of 380K)" value={ec.reviewCostPct} min={10} max={100} step={5} onChange={(v) => setEc({ ...ec, reviewCostPct: v })} fmt={(v) => `${v}%`} />
             <Slider label="Funding cost (p.a.)" value={ec.funding} min={2} max={15} step={0.25} onChange={(v) => setEc({ ...ec, funding: v })} fmt={(v) => `${v}%`} />
             <Slider label="LGD" value={ec.lgd} min={20} max={100} step={1} onChange={(v) => setEc({ ...ec, lgd: v })} fmt={(v) => `${v}%`} />
-            <Slider label="Applications in cohort" value={n} min={100} max={10000} step={100} onChange={setN} fmt={(v) => v.toLocaleString()} />
+            <Slider label="Number of applications" value={n} min={100} max={10000} step={100} onChange={setN} fmt={(v) => v.toLocaleString()} />
           </div>
         </Card>
-        <Card className="lg:col-span-3" title="Current vs proposed" sub="Contribution = Revenue − Funding − Processing − Expected credit loss (M VND, cohort)" right={<Tag kind="sim" />}>
+        <Card className="lg:col-span-3" title="Current vs proposed" sub="Contribution = Revenue − Funding − Processing − Expected credit loss (M VND, for this group of applications)" right={<Tag kind="sim" />}>
           <div className="mb-3 grid gap-3.5 sm:grid-cols-2">
             <div className="space-y-3">
               <p className="text-xs font-semibold text-hred-600">Current</p>
@@ -115,7 +121,7 @@ export function Impact() {
               <Slider label="Approval rate" value={appP} min={10} max={80} step={1} onChange={setAppP} fmt={(v) => `${v}%`} />
               <Slider label="Conversion (customer completes)" value={convP} min={20} max={95} step={1} onChange={setConvP} fmt={(v) => `${v}%`} />
               <Slider label="Default rate" value={defP} min={0.5} max={12} step={0.1} onChange={setDefP} fmt={(v) => `${v.toFixed(1)}%`} />
-              <Slider label="STP rate" value={stp} min={0} max={80} step={1} onChange={setStp} fmt={(v) => `${v}%`} />
+              <Slider label="Automatic decision rate (STP)" value={stp} min={0} max={80} step={1} onChange={setStp} fmt={(v) => `${v}%`} />
             </div>
           </div>
           <div className="h-60">

@@ -3,7 +3,7 @@ import { SCENARIOS } from '../lib/data'
 import { evaluate } from '../lib/engine'
 import { useStore } from '../lib/store'
 
-const DOT = { 'STP Approve': 'bg-ok-600', Refer: 'bg-warn-600', Decline: 'bg-hred-600' } as const
+const DOT = { 'Approve': 'bg-ok-600', Review: 'bg-warn-600', Decline: 'bg-hred-600' } as const
 
 export function ScenarioPicker({ compact }: { compact?: boolean }) {
   const { scenario, setScenarioId, th, ec } = useStore()

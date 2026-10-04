@@ -2,23 +2,23 @@ import { useState } from 'react'
 import { ScreenHeader } from '../components/ui'
 
 const QA: [string, string][] = [
-  ['Why is this the bottleneck?', 'Not because approval is slow in itself. The process is built around documents and bureau history, so it cannot use the cash-flow and behavioural data that already exists for thin-file customers. That drives delay, a fixed 380K cost per application, and exclusion of the segments the case highlights. The fixed cost matters most on small tickets.'],
-  ['Why alternative data?', 'Those customers have little bureau history but real income and activity. Bank inflows, platform payouts and wallet behaviour are direct evidence of capacity to repay. It is used only with consent and where legally and operationally available.'],
-  ['Why AI?', 'To combine many weak, heterogeneous signals, catch nonlinear patterns, output a probability with a confidence level, segment dynamically and flag anomalies. It adds judgement where rules have no single decisive variable. It does not replace policy.'],
-  ['Why not simple rules?', 'Fixed thresholds on a few variables either reject good thin-file customers or admit risky ones, and cannot express confidence. Rules stay in the design for hard constraints; the model adds the probability and the confidence that decide who needs a human.'],
-  ['How is fraud controlled?', 'Identity and fraud are screened first, scored separately from credit, and a high fraud score declines regardless of how good the credit looks (scenario F). Rules plus anomaly detection, with fraud metrics monitored on screen 10.'],
-  ['What happens when the model is uncertain?', 'Confidence below the threshold routes to a credit officer with the evidence pack. With missing data and weak evidence the engine asks for more information or declines. First-time borrowers are never auto-approved.'],
-  ['Who owns the final decision?', 'The bank. Policy rules and limits are set and owned by credit risk; the model recommends within them; credit officers decide referrals and can override, and overrides are tracked.'],
-  ['How does HLBVN earn?', 'Interest revenue less funding cost, processing cost and expected credit loss. Lower unit cost and faster decisions make small-ticket loans viable; higher conversion adds volume. Contribution is modelled on screen 9 with adjustable assumptions.'],
-  ['How is incremental value measured?', 'A controlled test: route a share of applications through the new engine and keep a comparable control on the current process. Compare TAT, cost per application, conversion, approval, STP, default and expected loss, then contribution per application.'],
-  ['Deployable in 6–12 months?', 'Plausibly, in phases, as a proposal and not a commitment: start with existing customers and class A data and conservative thresholds with high referral; add consented partner data one source at a time; validate the model and monitoring before widening STP. Timing depends on data agreements and model validation.'],
+  ['Why is this the bottleneck?', 'Not because approval is slow by itself. The process runs on documents and credit-credit history, so it cannot use the money-flow and behaviour data that already exists for customers with little credit history. That causes delay, a fixed 380K cost per application, and many good customers being turned away. A fixed cost hurts most on small loans.'],
+  ['Why use data beyond the credit bureau?', 'These customers have little credit history but real income and activity. Bank inflows, platform payouts and wallet activity directly show whether they can repay. We use them only with the customer\'s consent and where the law and the data allow it.'],
+  ['Where does AI fit?', 'The decision comes from an illustrative scorecard plus policy rules, with people reviewing grey cases. AI is used for checks from day one (face and live-person check, spotting fraud, choosing who to offer a loan to). An AI credit model runs next to the scorecard as a challenger. It decides nothing until it is proven.'],
+  ['Why not only simple rules?', 'Fixed cut-offs on a few numbers either reject good customers with little history or let risky ones through, and they do not say how sure we are. The scorecard combines more signals and gives a confidence level, so we know when a person should look.'],
+  ['How is fraud controlled?', 'Identity and fraud are checked first and scored separately from credit. A high fraud score means Decline, even if the credit looks good (scenario F). Fraud numbers are tracked on screen 10.'],
+  ['What if the data is missing or the score is unsure?', 'Low confidence sends the case to a credit officer with the evidence. If data is missing and the evidence is weak, we ask for more information or decline. First-time borrowers are never approved automatically.'],
+  ['Who owns the final decision?', 'The bank. Credit risk sets the rules and limits. The scorecard recommends within them. Credit officers decide Review cases and can override. Overrides are tracked.'],
+  ['How does HLBVN earn money?', 'Interest income, minus funding cost, processing cost and expected credit loss. Lower cost and faster decisions make small loans worth doing, and more customers finish the loan. Screen 9 shows this with settings you can change.'],
+  ['How do we measure the extra value?', 'Run a test: send some applications through the new engine and keep a similar group on the current process. Compare decision time, cost per application, approval, drop-out, default and expected loss, then profit per application.'],
+  ['Can it launch in 6–12 months?', 'It could, in steps. This is a proposal, not a promise. Start with existing customers and bank data, with low limits and more manual review. Add partner data one source at a time, with consent. Check the scorecard and monitoring before allowing more automatic approvals.'],
 ]
 
 export function JudgeQA() {
   const [open, setOpen] = useState<number | null>(0)
   return (
     <div>
-      <ScreenHeader n={12} title="Why this works: judge Q&A" question="Short answers to the ten questions a credit committee or judge is likely to ask." />
+      <ScreenHeader n={12} title="Why this works: judge Q&A" question="Short answers to ten questions a credit committee or judge is likely to ask." />
       <ul className="space-y-2">
         {QA.map(([q, a], i) => (
           <li key={q} className="card overflow-hidden">

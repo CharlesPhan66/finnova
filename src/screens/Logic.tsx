@@ -1,6 +1,6 @@
 import { Card, DecisionBadge, ScreenHeader, Slider, Tag } from '../components/ui'
 import { ScenarioPicker } from '../components/ScenarioPicker'
-import { DEFAULT_THRESHOLDS } from '../lib/data'
+import { DEFAULT_THRESHOLDS, SCORECARD_NOTE } from '../lib/data'
 import type { Rule } from '../lib/engine'
 import { useStore } from '../lib/store'
 
@@ -28,20 +28,21 @@ export function Logic() {
   const { scenario: s, result: r, th, setTh, ov, setOv } = useStore()
   const stpOk = r.rules.stp.every((x) => x.pass)
   const declineHit = r.rules.decline.some((x) => x.pass)
-  const referHit = r.decision === 'Refer'
+  const referHit = r.decision === 'Review'
   const set = (k: keyof typeof th) => (n: number) => setTh({ ...th, [k]: n })
 
   return (
     <div>
       <ScreenHeader n={5} title="Explainable decision logic" question="Every decision shows the rule that fired, the factors for and against, and a plain reason. Never “the AI says no”." />
       <ScenarioPicker compact />
+      <p className="mt-2 text-xs text-slate-500">Scorecard: {SCORECARD_NOTE}</p>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-3">
-        <RuleCard title="STP approve" hint="Straight-through" rules={r.rules.stp} mode="all" fired={r.decision === 'STP Approve'} />
-        <RuleCard title="Refer to human" hint="When not STP and not decline" rules={r.rules.refer} mode="any" fired={referHit} />
+        <RuleCard title="Approve" hint="Automatic, no person involved" rules={r.rules.stp} mode="all" fired={r.decision === 'Approve'} />
+        <RuleCard title="Review" hint="Not an automatic approval and not a decline" rules={r.rules.refer} mode="any" fired={referHit} />
         <RuleCard title="Decline" hint="Hard stops" rules={r.rules.decline} mode="any" fired={declineHit} />
       </div>
-      <p className="mt-2 text-[11px] text-slate-500">Rule order: Decline conditions are checked first (they are hard stops owned by policy), then STP, otherwise Refer. {stpOk ? '' : 'STP conditions are not all met for this customer.'}</p>
+      <p className="mt-2 text-[11px] text-slate-500">Rule order: Decline conditions are checked first (they are hard stops owned by policy), then Approve, otherwise Review. {stpOk ? '' : 'Not every Approve condition is met for this customer.'}</p>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-5">
         <Card className="lg:col-span-3" title={<>Decision for scenario {s.id}</>} right={<DecisionBadge d={r.decision} big />}>
@@ -83,17 +84,17 @@ export function Logic() {
 
       <Card className="mt-4" title="Policy thresholds" sub="Illustrative policy thresholds, team assumption" right={<button onClick={() => setTh(DEFAULT_THRESHOLDS)} className="rounded border border-sky-200 px-2 py-1 text-xs hover:bg-sky-50">Reset defaults</button>}>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <Slider label="STP confidence threshold" tip="Minimum model confidence for straight-through approval." value={th.confidenceStp} min={50} max={95} step={1} onChange={set('confidenceStp')} fmt={(n) => `${n}`} />
-          <Slider label="Data-sufficiency floor" tip="Below this confidence, with both bureau and cash-flow evidence weak, the application is declined with a request for more information." value={th.confidenceFloor} min={10} max={60} step={1} onChange={set('confidenceFloor')} fmt={(n) => `${n}`} />
+          <Slider label="Confidence needed to approve automatically" tip="Lowest confidence at which the engine can approve without a person." value={th.confidenceStp} min={50} max={95} step={1} onChange={set('confidenceStp')} fmt={(n) => `${n}`} />
+          <Slider label="Data-sufficiency floor" tip="Below this confidence, with both the credit file and the cash-flow evidence weak, the application is declined with a request for more information." value={th.confidenceFloor} min={10} max={60} step={1} onChange={set('confidenceFloor')} fmt={(n) => `${n}`} />
           <Slider label="Credit risk Low up to PD" value={th.pdLowMax} min={1} max={8} step={0.5} onChange={set('pdLowMax')} fmt={(n) => `${n}%`} />
           <Slider label="Credit risk Medium up to PD" value={th.pdMedMax} min={5} max={20} step={0.5} onChange={set('pdMedMax')} fmt={(n) => `${n}%`} />
           <Slider label="Fraud Low up to score" value={th.fraudLowMax} min={10} max={50} step={1} onChange={set('fraudLowMax')} fmt={(n) => `${n}`} />
           <Slider label="Fraud High from score" value={th.fraudHighMin} min={40} max={90} step={1} onChange={set('fraudHighMin')} fmt={(n) => `${n}`} />
           <Slider label="Identity match minimum" value={th.identityMin} min={70} max={99} step={1} onChange={set('identityMin')} fmt={(n) => `${n}`} />
-          <Slider label="Maximum total debt burden" tip="Existing debt service plus the new instalment, as % of verified monthly income. A responsible-lending rule." value={th.maxBurden} min={20} max={60} step={1} onChange={set('maxBurden')} fmt={(n) => `${n}%`} />
+          <Slider label="Maximum total debt burden" tip="Existing debt service plus the new monthly payment, as % of verified monthly income. A rule to protect customers from over-borrowing." value={th.maxBurden} min={20} max={60} step={1} onChange={set('maxBurden')} fmt={(n) => `${n}%`} />
           <label className="flex items-start gap-2 text-xs text-slate-700">
             <input className="mt-0.5" type="checkbox" checked={th.firstTimeNoStp} onChange={(e) => setTh({ ...th, firstTimeNoStp: e.target.checked })} />
-            <span>Hard rule: never auto-approve first-time borrowers (conservative limit {(th.firstTimeCap / 1e6).toFixed(0)}M) <Tag kind="assumption" /></span>
+            <span>Hard rule: never auto-approve first-time borrowers (low limit {(th.firstTimeCap / 1e6).toFixed(0)}M) <Tag kind="assumption" /></span>
           </label>
         </div>
       </Card>

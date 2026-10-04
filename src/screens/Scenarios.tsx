@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { DecisionBadge, Card, LevelBadge, Metric, ScreenHeader, Tag } from '../components/ui'
+import { PhoneMock } from '../components/PhoneMock'
 import { ScenarioPicker } from '../components/ScenarioPicker'
 import { CASE } from '../lib/data'
 import { scenarioEcon } from '../lib/econ'
@@ -19,23 +20,21 @@ function Pane({ title, tone, children }: { title: string; tone: 'red' | 'blue'; 
 
 export function Scenarios() {
   const { scenario: s, result: r, ec } = useStore()
-  const [stage, setStage] = useState(5)
-  const [run, setRun] = useState(0)
+  const [stage, setStage] = useState(0)
   const e = scenarioEcon(s, r, ec)
 
-  useEffect(() => {
-    setStage(0)
-    const id = window.setInterval(() => setStage((v) => { if (v >= 5) { window.clearInterval(id); return 5 } return v + 1 }), 850)
-    return () => window.clearInterval(id)
-  }, [s.id, run])
+  // Start from the first step whenever a different customer is picked
+  useEffect(() => { setStage(0) }, [s.id])
+  const next = () => setStage((v) => Math.min(4, v + 1))
+  const restart = () => setStage(0)
 
   const i = s.inputs
   const curBad = s.current.outcome !== 'Approve'
 
   return (
     <div>
-      <ScreenHeader n={3} title="Run a customer scenario" question="Pick a synthetic customer and watch input → risk → decision → offer → economics, current treatment against proposed.">
-        <button onClick={() => setRun((v) => v + 1)} className="rounded-md bg-hred-600 px-4 py-2 text-sm font-semibold text-white hover:bg-hred-700">Run simulation</button>
+      <ScreenHeader n={3} title="Run a customer scenario" question="Pick a synthetic customer, then tap through the phone at your own pace: input → risk → decision → offer → economics. Current treatment is shown next to the proposed one.">
+        <button onClick={restart} className="rounded-md bg-hred-600 px-4 py-2 text-sm font-semibold text-white hover:bg-hred-700">Restart</button>
       </ScreenHeader>
       <ScenarioPicker compact />
       <p className="mt-2 text-xs text-slate-500">Dot colour = proposed-engine outcome with current thresholds. Customers are synthetic <Tag kind="assumption" />.</p>
@@ -43,12 +42,15 @@ export function Scenarios() {
       <Card className="mt-4" title={<>Scenario {s.id}: {s.name}</>} sub={s.blurb} right={<span className="text-xs text-slate-500">Requests {vnd(s.requested)} VND over {s.tenure} months</span>}>
         <ol className="mb-4 flex flex-wrap gap-1.5" aria-label="Simulation progress">
           {STAGES.map((t, k) => (
-            <li key={t} className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition ${k < stage ? 'bg-navy-900 text-white' : k === stage ? 'animate-pulseRing bg-sky-200 text-navy-900' : 'bg-sky-100 text-slate-400'}`}>
-              <span>{k + 1}</span>{t}
+            <li key={t}>
+              <button onClick={() => setStage(k)} className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition ${k < stage ? 'bg-navy-900 text-white' : k === stage ? 'animate-pulseRing bg-sky-200 text-navy-900' : 'bg-sky-100 text-slate-400 hover:text-slate-600'}`}>
+                <span>{k + 1}</span>{t}
+              </button>
             </li>
           ))}
         </ol>
 
+        <div className="grid gap-5 xl:grid-cols-[1fr_300px]">
         <div className="space-y-3">
           {stage >= 0 && (
             <div className="grid gap-3 md:grid-cols-2">
@@ -61,7 +63,7 @@ export function Scenarios() {
               </Pane>
               <Pane title="Proposed: what the engine sees (consented)" tone="blue">
                 <ul className="space-y-1 text-xs text-slate-700">
-                  <li><b>Income:</b> {vnd(i.monthlyIncome)}/month, consistency {i.incomeConsistency}, recurring {i.recurringShare}%</li>
+                  <li><b>Income:</b> {vnd(i.monthlyIncome)}/month, steadiness {i.incomeConsistency}, repeating {i.recurringShare}%</li>
                   <li><b>Digital:</b> {i.platformIncome ? `platform ${vnd(i.platformIncome)}/mo · ` : ''}{i.ecommerceSales ? `online sales ${vnd(i.ecommerceSales)}/mo · ` : ''}wallet activity {i.ewalletActivity}, {i.txPerMonth} tx/month</li>
                   <li><b>Identity / fraud:</b> match {i.identityMatch}, device risk {i.deviceRisk}, duplicates {i.duplicateSignals}</li>
                   <li><b>Data completeness:</b> {i.dataCompleteness}%</li>
@@ -78,7 +80,7 @@ export function Scenarios() {
                   <div><p className="mb-1 text-slate-500">Fraud</p><LevelBadge level={r.fraudLevel} /></div>
                   <div><p className="mb-1 text-slate-500">Credit (PD {r.pd.toFixed(1)}%)</p><LevelBadge level={r.creditLevel} /></div>
                 </div>
-                <p className="mt-2 text-xs text-slate-600">Affordability: <b>{r.affordability === 'FAIL' ? 'FAIL' : 'PASS'}</b> (debt burden {r.burden.toFixed(0)}%) · Confidence <b>{r.confidence.toFixed(0)}</b></p>
+                <p className="mt-2 text-xs text-slate-600">Repayment ability: <b>{r.affordability === 'FAIL' ? 'FAIL' : 'PASS'}</b> (debt burden {r.burden.toFixed(0)}%) · Confidence <b>{r.confidence.toFixed(0)}</b></p>
               </Pane>
             </div>
           )}
@@ -90,7 +92,7 @@ export function Scenarios() {
               </Pane>
               <Pane title="Proposed: decision" tone="blue">
                 <DecisionBadge d={r.decision} big />
-                <p className="mt-1 text-xs text-slate-600">in about {ec.proposedMinutes} minutes <Tag kind="assumption" /></p>
+                <p className="mt-1 text-xs text-slate-600">in under {ec.proposedMinutes} minutes <Tag kind="assumption" /></p>
                 <p className="mt-2 text-xs text-slate-700">{r.reason}</p>
               </Pane>
             </div>
@@ -104,8 +106,8 @@ export function Scenarios() {
                 {r.offer ? (
                   <>
                     <p className="text-sm font-semibold text-navy-900">{vnd(r.offer.amount)} VND · {r.offer.tenure} months</p>
-                    <p className="text-xs text-slate-600">Instalment ≈ {vnd(r.offer.installment)}/month · indicative APR {r.offer.apr}% <Tag kind="assumption" /></p>
-                    <p className="mt-1 text-xs text-slate-600">{r.offer.note}{r.decision === 'Refer' ? ' Subject to human review.' : ''}</p>
+                    <p className="text-xs text-slate-600">Monthly payment ≈ {vnd(r.offer.installment)}/month · indicative APR {r.offer.apr}% <Tag kind="assumption" /></p>
+                    <p className="mt-1 text-xs text-slate-600">{r.offer.note}{r.decision === 'Review' ? ' Subject to human review.' : ''}</p>
                   </>
                 ) : <p className="text-xs text-slate-700">No offer. Customer receives a plain reason and, where data was missing, a route to resubmit.</p>}
               </Pane>
@@ -124,14 +126,20 @@ export function Scenarios() {
             </div>
           )}
         </div>
+        <div className="xl:sticky xl:top-20 xl:self-start">
+          <p className="mb-2 text-center text-xs font-semibold text-navy-900">What the customer sees</p>
+          <PhoneMock s={s} r={r} step={stage} onNext={next} onRestart={restart} />
+          <p className="mt-2 text-center text-[11px] text-slate-500">Tap the buttons on the phone to move to the next step. The panels on the left follow.</p>
+        </div>
+        </div>
         <p className="mt-3 text-[11px] text-slate-500">Case range for TAT is {CASE.tatMinDays}–{CASE.tatMaxDays} days <Tag kind="case" />; position inside the range, the profile and all outputs are simulated.</p>
       </Card>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Metric label="Current decision" value={s.current.outcome} tone={curBad ? 'red' : 'green'} tag="sim" />
-        <Metric label="Proposed decision" value={r.decision === 'STP Approve' ? 'STP Approve' : r.decision === 'Refer' ? 'Refer to human' : 'Decline'} tone={r.decision === 'STP Approve' ? 'green' : r.decision === 'Refer' ? 'amber' : 'red'} tag="sim" />
-        <Metric label="Time to decision" value={`${s.current.tatDays.toFixed(1)} d → ~${ec.proposedMinutes} min`} tag="sim" />
-        <Metric label="Unit cost" value={`380K → ${vnd(r.decision === 'Refer' ? ec.proposedCost + CASE.costPerApp * ec.referralCostPct / 100 : ec.proposedCost)}`} tag="assumption" tip="Current cost is the case benchmark. Proposed cost is an adjustable team assumption (Impact screen)." />
+        <Metric label="Proposed decision" value={r.decision === 'Approve' ? 'Approve' : r.decision === 'Review' ? 'Review' : 'Decline'} tone={r.decision === 'Approve' ? 'green' : r.decision === 'Review' ? 'amber' : 'red'} tag="sim" />
+        <Metric label="Time to decision" value={`${s.current.tatDays.toFixed(1)} d → < ${ec.proposedMinutes} min`} tag="sim" />
+        <Metric label="Unit cost" value={`380K → ${vnd(r.decision === 'Review' ? ec.proposedCost + CASE.costPerApp * ec.reviewCostPct / 100 : ec.proposedCost)}`} tag="assumption" tip="Current cost is the case benchmark. Proposed cost is an adjustable team assumption (Impact screen)." />
       </div>
     </div>
   )

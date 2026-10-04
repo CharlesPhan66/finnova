@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Bar, Card, DecisionBadge, Gauge, LevelBadge, ScreenHeader, StatusPill, Tag, Tip } from '../components/ui'
 import { ScenarioPicker } from '../components/ScenarioPicker'
+import { SCORECARD_NOTE } from '../lib/data'
 import { vnd } from '../lib/format'
 import { useStore } from '../lib/store'
 
@@ -33,19 +34,19 @@ export function EngineScreen() {
 
   return (
     <div>
-      <ScreenHeader n={4} title="Decision engine" question="How does data become a decision? Five input families go in; identity, fraud and credit risk come out separately, with affordability and confidence deciding the route." />
+      <ScreenHeader n={4} title="Decision engine" question="How does data become a decision? Five input families go in; identity, fraud and credit risk come out separately, with repayment ability and confidence deciding the route." />
       <ScenarioPicker compact />
       <div className="mt-4 grid gap-4 xl:grid-cols-[1.1fr_auto_1fr]">
         <div className="space-y-3">
           <Group title="Traditional data">
-            <Row k="CIC / bureau" v={cic} />
+            <Row k="CIC (credit bureau)" v={cic} />
             <Row k="Existing monthly debt service" v={`${vnd(i.existingDebtMonthly)} VND`} />
             <Row k="Repayment history" v={repay} />
           </Group>
           <Group title="Cash-flow data">
             <Row k="Monthly income (observed)" v={`${vnd(i.monthlyIncome)} VND`} />
-            <Row k="Income consistency" v={i.incomeConsistency} bar={i.incomeConsistency} tip="How steady month-to-month inflows are, 0–100." />
-            <Row k="Recurring share of inflows" v={`${i.recurringShare}%`} bar={i.recurringShare} />
+            <Row k="Income consistency" v={i.incomeConsistency} bar={i.incomeConsistency} tip="How steady the money coming in is from month to month, 0–100." />
+            <Row k="Share of income that repeats" v={`${i.recurringShare}%`} bar={i.recurringShare} />
             <Row k="Living expenses / income" v={`${i.expenseRatio}%`} bar={i.expenseRatio} />
           </Group>
           <Group title="Digital activity (consent required)">
@@ -54,14 +55,14 @@ export function EngineScreen() {
             <Row k="E-wallet activity" v={i.ewalletActivity} bar={i.ewalletActivity} />
             <Row k="Transactions per month" v={i.txPerMonth} />
           </Group>
-          <Group title="Affordability">
+          <Group title="Repayment ability">
             <Row k="Requested" v={`${vnd(s.requested)} VND · ${s.tenure} mo`} />
-            <Row k="Instalment at engine pricing" v={`${vnd(r.installment)}/mo`} />
+            <Row k="Monthly payment" v={`${vnd(r.installment)}/mo`} />
             <Row k="Total debt burden" v={`${r.burden.toFixed(0)}% (limit ${th.maxBurden}%)`} bar={r.burden} />
           </Group>
           <Group title="Fraud / identity" tone="red">
             <Row k="Identity match" v={i.identityMatch} bar={i.identityMatch} />
-            <Row k="Application consistency" v={i.appConsistency} bar={i.appConsistency} />
+            <Row k="Details match (0–100)" v={i.appConsistency} bar={i.appConsistency} />
             <Row k="Device / behaviour risk" v={i.deviceRisk} bar={i.deviceRisk} />
             <Row k="Duplicate-application signals" v={i.duplicateSignals} />
           </Group>
@@ -71,7 +72,7 @@ export function EngineScreen() {
           <span className="text-2xl text-navy-600 xl:rotate-0 rotate-90">➜</span>
           <div className="w-full rounded-xl bg-navy-900 p-4 text-center text-white shadow-lg">
             <p className="text-[11px] uppercase tracking-widest text-sky-300">Decision engine</p>
-            <p className="mt-2 text-xs leading-snug">AI model<br />+ policy rules<br />+ human oversight</p>
+            <p className="mt-2 text-xs leading-snug">Scorecard<br />+ policy rules<br />+ human review</p>
           </div>
           <span className="text-2xl text-navy-600 rotate-90 xl:rotate-0">➜</span>
         </div>
@@ -86,15 +87,16 @@ export function EngineScreen() {
             <div className="flex items-center justify-between py-2"><dt className="text-slate-600">Identity</dt><dd><StatusPill ok={r.identityVerified} yes="VERIFIED" no="FAILED" /></dd></div>
             <div className="flex items-center justify-between py-2"><dt className="text-slate-600">Fraud risk</dt><dd><LevelBadge level={r.fraudLevel} /></dd></div>
             <div className="flex items-center justify-between py-2"><dt className="text-slate-600">Credit risk</dt><dd><LevelBadge level={r.creditLevel} /></dd></div>
-            <div className="flex items-center justify-between py-2"><dt className="text-slate-600">Affordability</dt><dd><StatusPill ok={r.affordability !== 'FAIL'} yes={r.affordability === 'REDUCED' ? 'PASS (REDUCED)' : 'PASS'} /></dd></div>
+            <div className="flex items-center justify-between py-2"><dt className="text-slate-600">Repayment ability</dt><dd><StatusPill ok={r.affordability !== 'FAIL'} yes={r.affordability === 'REDUCED' ? 'PASS (REDUCED)' : 'PASS'} /></dd></div>
             <div className="flex items-center justify-between py-2"><dt className="text-slate-600">Model confidence</dt><dd className="font-semibold tabular-nums">{r.confidence.toFixed(0)} · {r.confidenceLevel}</dd></div>
             <div className="flex items-center justify-between py-2"><dt className="text-slate-600">Recommended decision</dt><dd><DecisionBadge d={r.decision} /></dd></div>
             <div className="flex items-center justify-between py-2"><dt className="text-slate-600">Recommended amount</dt><dd className="font-semibold">{r.offer ? `${vnd(r.offer.amount)} VND` : '—'}</dd></div>
-            <div className="flex items-center justify-between py-2"><dt className="text-slate-600">Recommended tenure</dt><dd className="font-semibold">{r.offer ? `${r.offer.tenure} months` : '—'}</dd></div>
+            <div className="flex items-center justify-between py-2"><dt className="text-slate-600">Recommended term</dt><dd className="font-semibold">{r.offer ? `${r.offer.tenure} months` : '—'}</dd></div>
             <div className="flex items-center justify-between py-2"><dt className="text-slate-600">Human-review flag</dt><dd><StatusPill ok={!r.humanReview} yes="NO" no="YES" /></dd></div>
           </dl>
-          {r.stopped && <p className="mt-2 rounded bg-hred-50 p-2 text-xs text-hred-700">Identity failed, so processing stops here. Fraud, credit and affordability results are not used.</p>}
-          <p className="mt-3 text-[11px] text-slate-500">Identity, fraud and credit risk are never merged into one score. A strong credit profile cannot offset a fraud or identity failure.</p>
+          {r.stopped && <p className="mt-2 rounded bg-hred-50 p-2 text-xs text-hred-700">Identity failed, so processing stops here. Fraud, credit and repayment ability results are not used.</p>}
+          <p className="mt-3 rounded bg-sky-50 p-2 text-[11px] text-slate-600"><b>Scorecard note:</b> {SCORECARD_NOTE} The chance of default (PD) comes from a simple formula, not a trained model.</p>
+          <p className="mt-2 text-[11px] text-slate-500">Identity, fraud and credit risk are never merged into one score. A strong credit profile cannot make up for a fraud or identity failure.</p>
         </Card>
       </div>
     </div>

@@ -57,12 +57,12 @@ export function ScreenHeader({ n, title, question, children }: { n: number; titl
 }
 
 const DEC: Record<Decision, string> = {
-  'STP Approve': 'bg-ok-600 text-white',
-  Refer: 'bg-warn-600 text-white',
+  'Approve': 'bg-ok-600 text-white',
+  Review: 'bg-warn-600 text-white',
   Decline: 'bg-hred-600 text-white',
 }
 export function DecisionBadge({ d, big }: { d: Decision; big?: boolean }) {
-  const label = d === 'STP Approve' ? 'STP APPROVE' : d === 'Refer' ? 'REFER TO HUMAN' : 'DECLINE'
+  const label = d === 'Approve' ? 'APPROVE' : d === 'Review' ? 'REVIEW' : 'DECLINE'
   return <span className={`inline-block rounded-md font-semibold tracking-wide ${DEC[d]} ${big ? 'px-4 py-2 text-base' : 'px-2.5 py-1 text-xs'}`}>{label}</span>
 }
 
@@ -80,9 +80,6 @@ export function StatusPill({ ok, yes = 'PASS', no = 'FAIL' }: { ok: boolean; yes
 export function Gauge({ value, label, lo, hi, invert = false, display }: { value: number; label: string; lo: number; hi: number; invert?: boolean; display?: string }) {
   // value 0..100; lo/hi are band edges (low<=lo green, >hi red; inverted for confidence)
   const v = Math.max(0, Math.min(100, value))
-  const ang = Math.PI * (1 - v / 100)
-  const x = 60 + 44 * Math.cos(ang)
-  const y = 62 - 44 * Math.sin(ang)
   const good = invert ? v >= hi : v <= lo
   const bad = invert ? v < lo : v > hi
   const color = good ? '#12805c' : bad ? '#c8102e' : '#b7791f'
@@ -91,7 +88,9 @@ export function Gauge({ value, label, lo, hi, invert = false, display }: { value
       <svg viewBox="0 0 120 74" className="w-32" role="img" aria-label={`${label} ${display ?? v.toFixed(0)}`}>
         <path d="M16 62 A44 44 0 0 1 104 62" fill="none" stroke="#e4eefa" strokeWidth="10" strokeLinecap="round" />
         <path d="M16 62 A44 44 0 0 1 104 62" fill="none" stroke={color} strokeWidth="10" strokeLinecap="round" pathLength={100} strokeDasharray={`${v} 100`} style={{ transition: 'stroke-dasharray .6s ease' }} />
-        <circle cx={x} cy={y} r="4" fill="#0a2a5c" style={{ transition: 'all .6s ease' }} />
+        <g style={{ transformOrigin: '60px 62px', transformBox: 'view-box', transform: `rotate(${v * 1.8}deg)`, transition: 'transform .6s ease' }}>
+          <circle cx="16" cy="62" r="4" fill="#0a2a5c" />
+        </g>
         <text x="60" y="58" textAnchor="middle" className="fill-navy-900" fontSize="17" fontWeight="700">{display ?? v.toFixed(0)}</text>
       </svg>
       <span className="-mt-1 text-xs font-medium text-slate-600">{label}</span>

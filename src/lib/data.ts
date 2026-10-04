@@ -5,7 +5,7 @@
 
 export type Kind = 'case' | 'assumption' | 'sim'
 export type Level = 'Low' | 'Medium' | 'High'
-export type Decision = 'STP Approve' | 'Refer' | 'Decline'
+export type Decision = 'Approve' | 'Review' | 'Decline'
 export type CicState = 'good' | 'thin' | 'none' | 'poor'
 
 export const CASE = {
@@ -162,7 +162,7 @@ export const DEFAULT_THRESHOLDS: Thresholds = {
 
 export interface Econ {
   proposedCost: number
-  referralCostPct: number
+  reviewCostPct: number
   proposedMinutes: number
   aprLow: number
   aprMed: number
@@ -171,8 +171,8 @@ export interface Econ {
 }
 
 export const DEFAULT_ECON: Econ = {
-  proposedCost: 60_000,
-  referralCostPct: 50,
+  proposedCost: 91_000,
+  reviewCostPct: 50,
   proposedMinutes: 5,
   aprLow: 16,
   aprMed: 21,
@@ -194,3 +194,5 @@ export const STATIC_ASSUMPTIONS: AssumptionItem[] = [
   { kind: 'case', label: 'Decision turnaround (centralized manual review)', value: '1.8 – 4.6 business days' },
   { kind: 'case', label: 'Application mix', value: 'Salaried with history 35.5% · salaried no history 20.5% · gig/platform 15.0% · online merchants 14.5% · first-time borrowers 14.5%' },
 ]
+
+export const SCORECARD_NOTE = 'Illustrative weights. To be re-estimated on the Round 3 dataset.'
