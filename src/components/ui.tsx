@@ -58,7 +58,7 @@ export function ScreenHeader({ n, title, question, children }: { n: number | str
 
 const DEC: Record<Decision, string> = {
   'Approve': 'bg-ok-600 text-white',
-  Review: 'bg-warn-600 text-white',
+  Review: 'bg-slate-500 text-white',
   Decline: 'bg-hred-600 text-white',
 }
 export function DecisionBadge({ d, big }: { d: Decision; big?: boolean }) {
@@ -110,8 +110,8 @@ export function Slider({ label, tip, value, min, max, step, onChange, fmt, kind 
   )
 }
 
-export function Metric({ label, value, tip, tag, tone = 'navy', sub }: { label: string; value: ReactNode; tip?: string; tag?: Kind; tone?: 'navy' | 'red' | 'green' | 'amber'; sub?: ReactNode }) {
-  const c = { navy: 'text-navy-900', red: 'text-hred-600', green: 'text-ok-600', amber: 'text-warn-600' }[tone]
+export function Metric({ label, value, tip, tag, tone = 'navy', sub }: { label: string; value: ReactNode; tip?: string; tag?: Kind; tone?: 'navy' | 'red' | 'green' | 'amber' | 'grey'; sub?: ReactNode }) {
+  const c = { navy: 'text-navy-900', red: 'text-hred-600', green: 'text-ok-600', amber: 'text-warn-600', grey: 'text-slate-500' }[tone]
   return (
     <div className="rounded-lg bg-sky-50 p-3">
       <div className="mb-1 flex items-center justify-between gap-1 text-[11px] font-medium uppercase tracking-wide text-slate-500">
