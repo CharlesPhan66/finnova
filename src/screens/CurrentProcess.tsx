@@ -20,7 +20,7 @@ const CURVE = Array.from({ length: 60 }, (_, i) => {
 })
 
 export function CurrentProcess() {
-  const [amount, setAmount] = useState(2_000_000)
+  const [amount, setAmount] = useState(10_000_000)
   const [tat, setTat] = useState(3.2)
   const ratio = (CASE.costPerApp / amount) * 100
   const tone = ratio >= 10 ? 'red' : ratio >= 3 ? 'amber' : 'green'

@@ -31,7 +31,7 @@ const NAV: { id: ScreenId; label: string }[] = [
 
 const DEMO: { screen: ScreenId; scenario?: string; title: string; say: string }[] = [
   { screen: 'hero', title: '1. The mechanism', say: 'Same customer, two journeys. Today: documents, manual checks, 1.8–4.6 days, 380K. Proposed: consent, digital data, engine, near-real-time.' },
-  { screen: 'current', scenario: 'C', title: '2. Why today is costly', say: 'Pick a small loan. The fixed 380K is a large share of principal, and a gig worker has little a document review can use.' },
+  { screen: 'current', scenario: 'C', title: '2. Why today is costly', say: 'Tap the 2M chip. The fixed 380K is a large share of principal, and a gig worker has little a document review can use.' },
   { screen: 'scenarios', scenario: 'C', title: '3. Gig worker, both ways', say: 'Tap through the phone at your own pace. Current treatment likely declines; proposed uses platform cash-flow and approves automatically.' },
   { screen: 'engine', scenario: 'C', title: '4. Inside the engine', say: 'Identity, fraud and credit risk are separate. Repayment ability and confidence decide if it can be approved automatically.' },
   { screen: 'impact', title: '5. Economics', say: 'Cost per application and contribution, current vs proposed. Move the cost slider to show sensitivity.' },
