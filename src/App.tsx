@@ -51,22 +51,22 @@ function Shell() {
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-30 bg-navy-900 text-white shadow">
-        <div className="flex items-center gap-3 px-4 py-2.5">
-          <button className="rounded bg-white/10 px-2 py-1 text-sm lg:hidden" onClick={() => setMenu(!menu)} aria-label="Toggle menu" aria-expanded={menu}>Menu</button>
-          <div className="flex items-center gap-2.5">
-            <span className="flex h-10 w-10 items-center justify-center rounded bg-white p-1">
-              <img src={`${import.meta.env.BASE_URL}hlb-logo-icon.png`} alt="Hong Leong Bank" className="h-full w-auto" />
+        <div className="flex items-center gap-2 px-3 py-2.5 sm:gap-3 sm:px-4">
+          <button className="rounded bg-white/10 px-2 py-1 text-sm lg:hidden" onClick={() => setMenu(!menu)} aria-label="Toggle menu" aria-expanded={menu}>☰</button>
+          <div className="flex min-w-0 items-center gap-2 sm:gap-2.5">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-white p-1">
+              <img src={`${import.meta.env.BASE_URL}hlb-logo-icon.png`} alt="Hong Leong Bank" className="h-full w-full object-contain" />
             </span>
-            <div className="leading-tight">
-              <h1 className="text-sm font-semibold sm:text-base">Point-of-Purchase Underwriting Simulation</h1>
-              <p className="hidden text-[11px] text-sky-200 sm:block">By Team Finnova · Business Challenge 2026 · HLBVN case · simulated data only, not HLBVN results</p>
+            <div className="min-w-0 leading-tight">
+              <h1 className="text-xs font-semibold sm:text-base"><span className="sm:hidden">Underwriting Simulation</span><span className="hidden sm:inline">Point-of-Purchase Underwriting Simulation</span></h1>
+              <p className="text-[10px] text-sky-200 sm:text-[11px]"><span className="sm:hidden">By Team Finnova</span><span className="hidden sm:inline">By Team Finnova · Business Challenge 2026 · HLBVN case · simulated data only, not HLBVN results</span></p>
             </div>
           </div>
-          <div className="ml-auto flex gap-2">
-            <button onClick={() => (demo === null ? go(0) : setDemo(null))} className={`rounded px-3 py-1.5 text-xs font-semibold ${demo === null ? 'bg-white/10 hover:bg-white/20' : 'bg-white text-navy-900'}`}>
-              {demo === null ? 'Demo guide' : 'Exit demo'}
+          <div className="ml-auto flex shrink-0 gap-1.5 sm:gap-2">
+            <button onClick={() => (demo === null ? go(0) : setDemo(null))} className={`rounded px-2 py-1.5 text-xs font-semibold sm:px-3 ${demo === null ? 'bg-white/10 hover:bg-white/20' : 'bg-white text-navy-900'}`}>
+              {demo === null ? <><span className="sm:hidden">Demo</span><span className="hidden sm:inline">Demo guide</span></> : <><span className="sm:hidden">Exit</span><span className="hidden sm:inline">Exit demo</span></>}
             </button>
-            <button onClick={() => setDrawer(true)} className="rounded bg-hred-600 px-3 py-1.5 text-xs font-semibold hover:bg-hred-700">Assumptions</button>
+            <button onClick={() => setDrawer(true)} className="rounded bg-hred-600 px-2 py-1.5 text-xs font-semibold hover:bg-hred-700 sm:px-3">Assumptions</button>
           </div>
         </div>
       </header>
