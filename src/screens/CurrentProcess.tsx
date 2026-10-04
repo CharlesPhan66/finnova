@@ -78,15 +78,15 @@ export function CurrentProcess() {
       </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
-        <Card title="Why thin-file customers are hard to assess here" sub="Evidence the process can read vs evidence that already exists">
+        <Card title="Why customers with little credit history are hard to assess here" sub="Evidence the process can read vs evidence that already exists">
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="rounded-lg bg-hred-50 p-3">
               <p className="mb-1.5 text-xs font-semibold text-hred-700">Process can read</p>
-              <ul className="space-y-1 text-xs text-slate-700"><li>Payslips, contracts, business papers</li><li>CIC / bureau history</li><li>Collateral or traditional evidence</li></ul>
+              <ul className="space-y-1 text-xs text-slate-700"><li>Payslips, contracts, business papers</li><li>CIC / credit history</li><li>Collateral or traditional evidence</li></ul>
             </div>
             <div className="rounded-lg bg-sky-100 p-3">
               <p className="mb-1.5 text-xs font-semibold text-navy-800">Exists but goes unused</p>
-              <ul className="space-y-1 text-xs text-slate-700"><li>Salary and recurring inflows in the account</li><li>Platform payouts, online sales</li><li>E-wallet and transaction behaviour<Tip text="Alternative data such as platform income, e-wallet and telecom/utility behaviour is only usable with customer consent and where legally and operationally available." /></li></ul>
+              <ul className="space-y-1 text-xs text-slate-700"><li>Salary and regular money coming into the account</li><li>Platform payouts, online sales</li><li>E-wallet and transaction behaviour<Tip text="Data beyond the credit bureau such as platform income, e-wallet and telecom/utility behaviour is only usable with customer consent and where legally and operationally available." /></li></ul>
             </div>
           </div>
           <p className="mt-3 text-xs text-slate-600">Result: no file means no evidence, so the customer is declined or waits for documents they may not have. The same fixed effort is spent either way.</p>

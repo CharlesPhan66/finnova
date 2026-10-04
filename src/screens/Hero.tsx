@@ -7,18 +7,18 @@ const CURRENT = [
   { t: 'Customer', d: 'Applies at branch or after checkout' },
   { t: 'Documents', d: 'Physical or scanned pack' },
   { t: 'Manual verification', d: 'Checked line by line' },
-  { t: 'CIC', d: 'Bureau history only' },
+  { t: 'CIC', d: 'Credit history only' },
   { t: 'Credit officer', d: 'Centralized manual review' },
   { t: 'Decision', d: 'Often a decline for thin files' },
 ]
 const PROPOSED = [
   { t: 'Customer', d: 'Applies at checkout' },
   { t: 'Consent', d: 'Customer approves data use' },
-  { t: 'Digital data', d: 'Bank, platform, wallet, bureau' },
+  { t: 'Digital data', d: 'Bank, work platform, e-wallet, credit bureau' },
   { t: 'Identity + Fraud', d: 'Screened before credit' },
-  { t: 'Cash-flow + Credit + Affordability', d: 'Assessed together, scored separately' },
-  { t: 'Decision engine', d: 'AI model + policy rules' },
-  { t: 'STP / Human / Decline', d: 'Confidence decides the route' },
+  { t: 'Cash-flow + Credit + Repayment ability', d: 'Assessed together, scored separately' },
+  { t: 'Decision engine', d: 'Scorecard + policy rules' },
+  { t: 'Approve / Review / Decline', d: 'Confidence decides the route' },
 ]
 
 function Flow({ steps, active, tone }: { steps: { t: string; d: string }[]; active: number; tone: 'red' | 'blue' }) {
@@ -63,7 +63,7 @@ export function Hero() {
 
   return (
     <div>
-      <ScreenHeader n={1} title="Baseline vs Proposed underwriting" question="The bottleneck is not that approval is slow. A document-centric manual process cannot use the digital cash-flow and behavioural data that already exists for thin-file customers.">
+      <ScreenHeader n={1} title="Baseline vs Proposed underwriting" question="The bottleneck is not that approval is slow. A document-centric manual process cannot use the digital cash-flow and behavioural data that already exists for customers with little credit history.">
         <button onClick={run} className="rounded-md bg-navy-900 px-4 py-2 text-sm font-semibold text-white hover:bg-navy-800">{play ? 'Playing…' : 'Play both journeys'}</button>
       </ScreenHeader>
 
@@ -82,7 +82,7 @@ export function Hero() {
           </div>
         </Card>
 
-        <Card title="Proposed: real-time, data-driven underwriting" sub="AI model + policy rules + human oversight" right={<Tag kind="assumption" text="PROPOSED DESIGN" />} className="border-t-4 border-t-navy-700">
+        <Card title="Proposed: real-time, data-driven underwriting" sub="Scorecard + policy rules + human review" right={<Tag kind="assumption" text="PROPOSED DESIGN" />} className="border-t-4 border-t-navy-700">
           <Flow steps={PROPOSED} active={step} tone="blue" />
           <div className={`mt-4 grid grid-cols-2 gap-3 transition-opacity ${step >= 7 ? 'opacity-100' : 'opacity-30'}`}>
             <div className="rounded-lg bg-sky-100 p-3 text-center">
@@ -101,14 +101,14 @@ export function Hero() {
         <div className="grid gap-3 md:grid-cols-2">
           <div className="rounded-lg border border-hred-600/30 bg-hred-50/50 p-3">
             <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-hred-600">Today</p>
-            <p className="text-sm text-slate-700">Documents and bureau file → manual verification and review → fixed effort per application → slow and costly → <b>limited visibility on thin-file customers</b> → poor economics for small-ticket point-of-purchase loans.</p>
+            <p className="text-sm text-slate-700">Documents and credit file → manual verification and review → fixed effort per application → slow and costly → <b>limited visibility on customers with little credit history</b> → poor economics for small-ticket point-of-purchase loans.</p>
           </div>
           <div className="rounded-lg border border-navy-600/30 bg-sky-50 p-3">
             <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-navy-700">Proposed</p>
-            <p className="text-sm text-slate-700">Consented digital data → identity, fraud, credit and affordability assessed separately → AI + rules + human oversight → STP, Refer or Decline → <b>faster decision, lower unit cost, better access, controlled credit risk</b>.</p>
+            <p className="text-sm text-slate-700">Consented digital data → identity, fraud, credit and repayment ability assessed separately → scorecard + rules + human review → Approve, Review or Decline → <b>faster decision, lower unit cost, better access, controlled credit risk</b>.</p>
           </div>
         </div>
-        <p className="mt-3 text-[11px] text-slate-500">Customer mix (<Tag kind="case" />): salaried with history 35.5%, salaried no history 20.5%, gig / platform 15.0%, online merchants 14.5%, first-time borrowers 14.5%. The four segments the case flags as hard to assess with traditional evidence add up to 64.5% of applications (sum of the case shares).</p>
+        <p className="mt-3 text-[11px] text-slate-500">Customer mix (<Tag kind="case" />): salaried with history 35.5%, salaried no history 20.5%, gig / platform 15.0%, online merchants 14.5%, first-time borrowers 14.5%. The four groups the case says are hard to assess the old way add up to 64.5% of applications (sum of the case shares).</p>
       </Card>
     </div>
   )

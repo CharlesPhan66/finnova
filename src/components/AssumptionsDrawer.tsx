@@ -8,14 +8,16 @@ export function AssumptionsDrawer() {
   if (!drawer) return null
 
   const assumptions: AssumptionItem[] = [
+    { kind: 'assumption', label: 'Scorecard weights (chance of default)', value: 'Base 3%, multipliers for credit file, late payments, income steadiness, debt and loan size. Illustrative weights. To be re-estimated on the Round 3 dataset.' },
+    { kind: 'assumption', label: 'Fraud loss in scenario F', value: 'If fraud gets through, the whole loan amount is assumed lost (no recovery).', note: 'Used only to show the risk of the current process' },
     { kind: 'assumption', label: 'Proposed automated processing cost (X)', value: vndFull(ec.proposedCost), note: 'Adjustable on Impact screen' },
-    { kind: 'assumption', label: 'Referral review cost, % of current manual cost', value: `${ec.referralCostPct}%` },
+    { kind: 'assumption', label: 'Review cost, % of current manual cost', value: `${ec.reviewCostPct}%` },
     { kind: 'assumption', label: 'Proposed decision time', value: `${ec.proposedMinutes} minutes (shown as "minutes / near-real-time")`, note: 'Not an HLBVN target' },
-    { kind: 'assumption', label: 'Illustrative policy thresholds', value: `STP confidence ≥ ${th.confidenceStp} · data floor ${th.confidenceFloor} · PD low ≤ ${th.pdLowMax}% · PD medium ≤ ${th.pdMedMax}% · fraud low ≤ ${th.fraudLowMax} · fraud high ≥ ${th.fraudHighMin} · identity ≥ ${th.identityMin} · max debt burden ${th.maxBurden}%` },
-    { kind: 'assumption', label: 'First-time borrower rule', value: `${th.firstTimeNoStp ? 'No STP' : 'STP allowed'}; conservative limit ${vndFull(th.firstTimeCap)}` },
+    { kind: 'assumption', label: 'Illustrative policy thresholds', value: `Automatic-approval confidence ≥ ${th.confidenceStp} · data floor ${th.confidenceFloor} · PD low ≤ ${th.pdLowMax}% · PD medium ≤ ${th.pdMedMax}% · fraud low ≤ ${th.fraudLowMax} · fraud high ≥ ${th.fraudHighMin} · identity ≥ ${th.identityMin} · max debt burden ${th.maxBurden}%` },
+    { kind: 'assumption', label: 'First-time borrower rule', value: `${th.firstTimeNoStp ? 'No automatic approval' : 'Automatic approval allowed'}; low limit ${vndFull(th.firstTimeCap)}` },
     { kind: 'assumption', label: 'Indicative pricing (APR)', value: `Low risk ${ec.aprLow}% · Medium risk ${ec.aprMed}%` },
     { kind: 'assumption', label: 'Funding cost / LGD', value: `${ec.funding}% p.a. · LGD ${ec.lgd}%` },
-    { kind: 'assumption', label: 'Portfolio inputs on Impact screen', value: 'Approval, STP, conversion, abandonment, default rate, volume, average loan size' },
+    { kind: 'assumption', label: 'Portfolio inputs on Impact screen', value: 'Approval, automatic decision rate, conversion, drop-out, default rate, volume, average loan size' },
     { kind: 'assumption', label: 'Customer profiles A–H', value: 'Synthetic customers; no real data. Income, debt and behaviour values are invented for illustration' },
     { kind: 'assumption', label: 'Current-process outcome and TAT per profile', value: 'Each TAT sits inside the case range 1.8–4.6 days; the position inside it is our choice' },
     { kind: 'assumption', label: 'Expected-loss risk curve and EL limit', value: 'PD rises exponentially with riskier applicants; EL limit set on screen 8' },
@@ -23,8 +25,8 @@ export function AssumptionsDrawer() {
   ]
   const sims: AssumptionItem[] = [
     { kind: 'sim', label: '380K as % of principal', value: 'Illustrative calculation based on case benchmark (380,000 ÷ requested amount)' },
-    { kind: 'sim', label: 'PD, fraud score, confidence, affordability, decision, offer', value: 'Computed live by the rule + score engine for each profile' },
-    { kind: 'sim', label: 'Contribution, expected loss, cost reduction, approval and STP impact', value: 'Computed from case facts and team assumptions; not HLBVN results' },
+    { kind: 'sim', label: 'PD, fraud score, confidence, repayment ability, decision, offer', value: 'Computed live by the rule + score engine for each profile' },
+    { kind: 'sim', label: 'Contribution, expected loss, cost reduction, approval and automatic-decision impact', value: 'Computed from case facts and team assumptions; not HLBVN results' },
     { kind: 'sim', label: 'Monitoring status (Green / Amber / Red)', value: 'Computed against the invented limits' },
   ]
   const groups: [string, AssumptionItem[], 'case' | 'assumption' | 'sim'][] = [

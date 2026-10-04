@@ -61,7 +61,7 @@ export function Scenarios() {
               </Pane>
               <Pane title="Proposed: what the engine sees (consented)" tone="blue">
                 <ul className="space-y-1 text-xs text-slate-700">
-                  <li><b>Income:</b> {vnd(i.monthlyIncome)}/month, consistency {i.incomeConsistency}, recurring {i.recurringShare}%</li>
+                  <li><b>Income:</b> {vnd(i.monthlyIncome)}/month, steadiness {i.incomeConsistency}, repeating {i.recurringShare}%</li>
                   <li><b>Digital:</b> {i.platformIncome ? `platform ${vnd(i.platformIncome)}/mo · ` : ''}{i.ecommerceSales ? `online sales ${vnd(i.ecommerceSales)}/mo · ` : ''}wallet activity {i.ewalletActivity}, {i.txPerMonth} tx/month</li>
                   <li><b>Identity / fraud:</b> match {i.identityMatch}, device risk {i.deviceRisk}, duplicates {i.duplicateSignals}</li>
                   <li><b>Data completeness:</b> {i.dataCompleteness}%</li>
@@ -78,7 +78,7 @@ export function Scenarios() {
                   <div><p className="mb-1 text-slate-500">Fraud</p><LevelBadge level={r.fraudLevel} /></div>
                   <div><p className="mb-1 text-slate-500">Credit (PD {r.pd.toFixed(1)}%)</p><LevelBadge level={r.creditLevel} /></div>
                 </div>
-                <p className="mt-2 text-xs text-slate-600">Affordability: <b>{r.affordability === 'FAIL' ? 'FAIL' : 'PASS'}</b> (debt burden {r.burden.toFixed(0)}%) · Confidence <b>{r.confidence.toFixed(0)}</b></p>
+                <p className="mt-2 text-xs text-slate-600">Repayment ability: <b>{r.affordability === 'FAIL' ? 'FAIL' : 'PASS'}</b> (debt burden {r.burden.toFixed(0)}%) · Confidence <b>{r.confidence.toFixed(0)}</b></p>
               </Pane>
             </div>
           )}
@@ -104,8 +104,8 @@ export function Scenarios() {
                 {r.offer ? (
                   <>
                     <p className="text-sm font-semibold text-navy-900">{vnd(r.offer.amount)} VND · {r.offer.tenure} months</p>
-                    <p className="text-xs text-slate-600">Instalment ≈ {vnd(r.offer.installment)}/month · indicative APR {r.offer.apr}% <Tag kind="assumption" /></p>
-                    <p className="mt-1 text-xs text-slate-600">{r.offer.note}{r.decision === 'Refer' ? ' Subject to human review.' : ''}</p>
+                    <p className="text-xs text-slate-600">Monthly payment ≈ {vnd(r.offer.installment)}/month · indicative APR {r.offer.apr}% <Tag kind="assumption" /></p>
+                    <p className="mt-1 text-xs text-slate-600">{r.offer.note}{r.decision === 'Review' ? ' Subject to human review.' : ''}</p>
                   </>
                 ) : <p className="text-xs text-slate-700">No offer. Customer receives a plain reason and, where data was missing, a route to resubmit.</p>}
               </Pane>
@@ -129,9 +129,9 @@ export function Scenarios() {
 
       <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Metric label="Current decision" value={s.current.outcome} tone={curBad ? 'red' : 'green'} tag="sim" />
-        <Metric label="Proposed decision" value={r.decision === 'STP Approve' ? 'STP Approve' : r.decision === 'Refer' ? 'Refer to human' : 'Decline'} tone={r.decision === 'STP Approve' ? 'green' : r.decision === 'Refer' ? 'amber' : 'red'} tag="sim" />
+        <Metric label="Proposed decision" value={r.decision === 'Approve' ? 'Approve' : r.decision === 'Review' ? 'Review' : 'Decline'} tone={r.decision === 'Approve' ? 'green' : r.decision === 'Review' ? 'amber' : 'red'} tag="sim" />
         <Metric label="Time to decision" value={`${s.current.tatDays.toFixed(1)} d → ~${ec.proposedMinutes} min`} tag="sim" />
-        <Metric label="Unit cost" value={`380K → ${vnd(r.decision === 'Refer' ? ec.proposedCost + CASE.costPerApp * ec.referralCostPct / 100 : ec.proposedCost)}`} tag="assumption" tip="Current cost is the case benchmark. Proposed cost is an adjustable team assumption (Impact screen)." />
+        <Metric label="Unit cost" value={`380K → ${vnd(r.decision === 'Review' ? ec.proposedCost + CASE.costPerApp * ec.reviewCostPct / 100 : ec.proposedCost)}`} tag="assumption" tip="Current cost is the case benchmark. Proposed cost is an adjustable team assumption (Impact screen)." />
       </div>
     </div>
   )

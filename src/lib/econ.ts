@@ -22,11 +22,11 @@ export function scenarioEcon(s: Scenario, r: Result, ec: Econ): ScenarioEcon {
     current = { ...zero(cur), note: s.current.outcome === 'Refer for documents' ? 'Sent back for documents; customer assumed to drop out. Cost still incurred.' : 'No loan booked. The full review cost is spent anyway.', booked: false }
   }
 
-  const refCost = cur * (ec.referralCostPct / 100)
+  const refCost = cur * (ec.reviewCostPct / 100)
   let proposed: ScenarioEcon['proposed']
-  if (r.decision === 'STP Approve' && r.offer) {
+  if (r.decision === 'Approve' && r.offer) {
     proposed = { ...contribution(r.offer.amount, r.offer.tenure, r.offer.apr, ec.funding, r.pd, ec.lgd, ec.proposedCost), note: 'Booked straight through at the engine offer.', booked: true }
-  } else if (r.decision === 'Refer' && r.offer) {
+  } else if (r.decision === 'Review' && r.offer) {
     proposed = { ...contribution(r.offer.amount, r.offer.tenure, r.offer.apr, ec.funding, r.pd, ec.lgd, ec.proposedCost + refCost), note: 'Shown as if the officer approves the indicative offer. Includes a reduced-cost referral review.', booked: true }
   } else {
     proposed = { ...zero(ec.proposedCost), note: 'Declined early at automated cost; no credit loss taken.', booked: false }

@@ -50,20 +50,20 @@ export function ExpectedLoss() {
         <Card className="lg:col-span-2" title="Expected loss for one loan" sub="EL = PD × LGD × EAD" right={<Tag kind="assumption" />}>
           <div className="space-y-4">
             <Slider label="PD (probability of default)" tip="Chance the borrower defaults over the loan life." value={pd} min={0.5} max={30} step={0.5} onChange={setPd} fmt={(n) => `${n.toFixed(1)}%`} />
-            <Slider label="LGD (loss given default)" tip="Share of the exposure not recovered after default. Unsecured consumer credit is assumed high." value={lgd} min={20} max={100} step={1} onChange={setLgd} fmt={(n) => `${n}%`} />
-            <Slider label="EAD (exposure at default)" tip="Amount outstanding if default happens. Case range 1.6M–90.1M VND." value={ead} min={1_600_000} max={90_100_000} step={100_000} onChange={setEad} fmt={(n) => `${vnd(n)}`} />
+            <Slider label="LGD (loss given default)" tip="Share of the amount we do not get back after a default. For loans with no collateral this is assumed to be high." value={lgd} min={20} max={100} step={1} onChange={setLgd} fmt={(n) => `${n}%`} />
+            <Slider label="EAD (amount owed at default)" tip="Amount still owed if the customer defaults. Case range 1.6M–90.1M VND." value={ead} min={1_600_000} max={90_100_000} step={100_000} onChange={setEad} fmt={(n) => `${vnd(n)}`} />
           </div>
           <div className="mt-4 rounded-xl bg-navy-900 p-4 text-center text-white">
             <p className="text-xs text-sky-200">{pd.toFixed(1)}% × {lgd}% × {vnd(ead)}</p>
             <p className="mt-1 text-2xl font-bold tabular-nums">{vnd(el)} VND</p>
-            <p className="text-xs text-sky-200">expected loss per loan · {(el / ead * 100).toFixed(2)}% of exposure <Tag kind="sim" /></p>
+            <p className="text-xs text-sky-200">expected loss per loan · {(el / ead * 100).toFixed(2)}% of the amount owed <Tag kind="sim" /></p>
           </div>
         </Card>
 
         <Card className="lg:col-span-3" title="What happens when approval widens" sub={`Per ${N.toLocaleString()} synthetic applicants ranked from lowest to highest risk, 12-month loans of the EAD above`} right={<Tag kind="sim" />}>
           <div className="mb-3 grid gap-4 sm:grid-cols-2">
             <Slider label="Approval rate" value={approval} min={10} max={100} step={1} onChange={setApproval} fmt={(n) => `${n}%`} />
-            <Slider label="Risk limit: expected loss ÷ disbursed" tip="Risk appetite. The optimum is the best contribution that stays at or under this limit." value={limit} min={1} max={8} step={0.25} onChange={setLimit} fmt={(n) => `${n.toFixed(2)}%`} />
+            <Slider label="Risk limit: expected loss ÷ paid out" tip="Risk appetite. The optimum is the best contribution that stays at or under this limit." value={limit} min={1} max={8} step={0.25} onChange={setLimit} fmt={(n) => `${n.toFixed(2)}%`} />
           </div>
           <div className="h-60">
             <ResponsiveContainer width="100%" height="100%">
@@ -81,7 +81,7 @@ export function ExpectedLoss() {
               </ComposedChart>
             </ResponsiveContainer>
           </div>
-          <p className="mt-1 text-[11px] text-slate-500">Navy: total contribution (left axis, after {vnd(ec.proposedCost)} automated cost per application). Red: expected loss ÷ disbursed (right axis).</p>
+          <p className="mt-1 text-[11px] text-slate-500">Navy: total contribution (left axis, after {vnd(ec.proposedCost)} automated cost per application). Red: expected loss ÷ paid out (right axis).</p>
         </Card>
       </div>
 
@@ -89,7 +89,7 @@ export function ExpectedLoss() {
         {breach && (
           <div className="rounded-xl border-2 border-hred-600 bg-hred-50 p-4">
             <p className="text-base font-bold text-hred-600">Growth without risk discipline</p>
-            <p className="mt-1 text-sm text-slate-700">At {approval}% approval, {approvedLoans} loans are booked but expected loss reaches {cur.elRate.toFixed(2)}% of disbursement, above the {limit.toFixed(2)}% limit. Approval is up; so is loss.</p>
+            <p className="mt-1 text-sm text-slate-700">At {approval}% approval, {approvedLoans} loans are booked but expected loss reaches {cur.elRate.toFixed(2)}% of loans paid out, above the {limit.toFixed(2)}% limit. Approval is up; so is loss.</p>
           </div>
         )}
         {pastOpt && (
@@ -101,15 +101,15 @@ export function ExpectedLoss() {
         {!breach && !pastOpt && (
           <div className="rounded-xl border-2 border-ok-600 bg-ok-50 p-4">
             <p className="text-base font-bold text-ok-600">Within risk limit</p>
-            <p className="mt-1 text-sm text-slate-700">Expected loss {cur.elRate.toFixed(2)}% of disbursement is inside the {limit.toFixed(2)}% limit. Widening approval further would be tested against the limit, not just against volume.</p>
+            <p className="mt-1 text-sm text-slate-700">Expected loss {cur.elRate.toFixed(2)}% of loans paid out is inside the {limit.toFixed(2)}% limit. Widening approval further would be tested against the limit, not just against volume.</p>
           </div>
         )}
       </div>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Metric label="Selected approval" value={`${approval}%`} sub={`${approvedLoans} loans`} />
-        <Metric label="Expected loss ÷ disbursed" value={`${cur.elRate.toFixed(2)}%`} tone={breach ? 'red' : 'green'} tag="sim" />
-        <Metric label="Contribution" value={`${cur.contrib.toFixed(1)}M`} tone={cur.contrib < 0 ? 'red' : 'navy'} tag="sim" sub="VND per cohort" />
+        <Metric label="Expected loss ÷ paid out" value={`${cur.elRate.toFixed(2)}%`} tone={breach ? 'red' : 'green'} tag="sim" />
+        <Metric label="Contribution" value={`${cur.contrib.toFixed(1)}M`} tone={cur.contrib < 0 ? 'red' : 'navy'} tag="sim" sub="VND, this group of applicants" />
         <Metric label="Optimum within limit" value={`${opt.a}% approval`} tone="green" tag="sim" sub={opt.a < unconstrained.a ? `Without the limit the peak would be ${unconstrained.a}%, which breaches it` : 'Limit does not bind'} />
       </div>
       <p className="mt-3 text-[11px] text-slate-500">Risk curve (PD rising from 0.8% for the best applicant to about 29% for the worst) and the limit are <Tag kind="assumption" />. They show the shape of the trade-off, not HLBVN loss data.</p>

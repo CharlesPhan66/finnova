@@ -59,7 +59,9 @@ export function evaluate(s: Scenario, th: Thresholds, ec: Econ, ov: Overrides = 
   const amount = s.requested
   const tenure = s.tenure
 
-  // 1. Identity, fraud, credit stay separate scores
+  // 1. Identity, fraud and credit stay separate scores.
+  // The PD formula below is an ILLUSTRATIVE scorecard. Its weights are not fitted to data and
+  // will be re-estimated on the Round 3 dataset.
   const identityVerified = i.identityMatch >= th.identityMin
   const fraudScore = clamp(
     0.45 * i.deviceRisk + 0.3 * (100 - i.appConsistency) + 0.15 * Math.min(100, i.duplicateSignals * 35) + 0.1 * (100 - i.identityMatch),
@@ -87,7 +89,7 @@ export function evaluate(s: Scenario, th: Thresholds, ec: Econ, ov: Overrides = 
   let affordability: Result['affordability'] = 'FAIL'
   let offerAmount = amount
   let offerTenure = tenure
-  let note = 'Requested amount and tenure fit within the burden limit.'
+  let note = 'The amount and term fit the customer budget.'
   const fits = (inst: number) => inst <= maxInstallment && i.monthlyIncome - livingCost - i.existingDebtMonthly - inst >= 0
   if (fits(installment)) {
     affordability = 'PASS'
@@ -95,7 +97,7 @@ export function evaluate(s: Scenario, th: Thresholds, ec: Econ, ov: Overrides = 
     const longer = CASE.tenures.filter((t) => t > tenure).find((t) => fits(amount * annuity(apr, t)))
     if (longer) {
       affordability = 'PASS'; offerTenure = longer; installment = amount * annuity(apr, longer)
-      note = `Tenure extended from ${tenure} to ${longer} months to fit the burden limit.`
+      note = `Term made longer, from ${tenure} to ${longer} months, so the payment fits the budget.`
     } else {
       const t = 24
       const room = Math.min(maxInstallment, i.monthlyIncome - livingCost - i.existingDebtMonthly)
@@ -103,7 +105,7 @@ export function evaluate(s: Scenario, th: Thresholds, ec: Econ, ov: Overrides = 
       if (maxP >= CASE.minLoan) {
         affordability = 'REDUCED'; offerAmount = Math.floor(maxP / 100_000) * 100_000; offerTenure = t
         installment = offerAmount * annuity(apr, t)
-        note = 'Amount reduced to what the customer can afford at 24 months.'
+        note = 'Amount lowered to what the customer can afford over 24 months.'
       }
     }
   }
@@ -123,49 +125,49 @@ export function evaluate(s: Scenario, th: Thresholds, ec: Econ, ov: Overrides = 
   const firstTimeBlock = th.firstTimeNoStp && s.firstTime
   const stp: Rule[] = [
     { label: 'Identity verified', value: `match ${i.identityMatch} ≥ ${th.identityMin}`, pass: identityVerified },
-    { label: 'Fraud risk Low', value: `${fraudScore.toFixed(0)} ≤ ${th.fraudLowMax}`, pass: fraudLevel === 'Low' },
-    { label: 'Affordability pass', value: `burden ${burden.toFixed(0)}% vs limit ${th.maxBurden}%`, pass: affordability !== 'FAIL' },
-    { label: 'Credit risk Low', value: `PD ${pd.toFixed(1)}% ≤ ${th.pdLowMax}%`, pass: creditLevel === 'Low' },
-    { label: 'Confidence ≥ threshold', value: `${confidence.toFixed(0)} ≥ ${th.confidenceStp}`, pass: confidence >= th.confidenceStp },
+    { label: 'Fraud risk is Low', value: `${fraudScore.toFixed(0)} ≤ ${th.fraudLowMax}`, pass: fraudLevel === 'Low' },
+    { label: 'Can afford the repayments', value: `burden ${burden.toFixed(0)}% vs limit ${th.maxBurden}%`, pass: affordability !== 'FAIL' },
+    { label: 'Credit risk is Low', value: `PD ${pd.toFixed(1)}% ≤ ${th.pdLowMax}%`, pass: creditLevel === 'Low' },
+    { label: 'Confidence is high enough', value: `${confidence.toFixed(0)} ≥ ${th.confidenceStp}`, pass: confidence >= th.confidenceStp },
   ]
-  if (th.firstTimeNoStp) stp.push({ label: 'Hard rule: not a first-time borrower', value: s.firstTime ? 'first-time borrower' : 'has history or exempt', pass: !firstTimeBlock })
+  if (th.firstTimeNoStp) stp.push({ label: 'Rule: not a first-time borrower', value: s.firstTime ? 'first-time borrower' : 'has history or exempt', pass: !firstTimeBlock })
   const refer: Rule[] = [
-    { label: 'Credit risk Medium', value: `PD ${pd.toFixed(1)}%`, pass: creditLevel === 'Medium' },
-    { label: 'Confidence below threshold', value: `${confidence.toFixed(0)} < ${th.confidenceStp}`, pass: confidence < th.confidenceStp },
-    { label: 'Fraud risk Medium', value: `${fraudScore.toFixed(0)}`, pass: fraudLevel === 'Medium' },
+    { label: 'Credit risk is Medium', value: `PD ${pd.toFixed(1)}%`, pass: creditLevel === 'Medium' },
+    { label: 'Confidence is too low', value: `${confidence.toFixed(0)} < ${th.confidenceStp}`, pass: confidence < th.confidenceStp },
+    { label: 'Fraud risk is Medium', value: `${fraudScore.toFixed(0)}`, pass: fraudLevel === 'Medium' },
   ]
   const decline: Rule[] = [
     { label: 'Identity not verified', value: `match ${i.identityMatch}`, pass: !identityVerified },
-    { label: 'Fraud risk High', value: `${fraudScore.toFixed(0)} ≥ ${th.fraudHighMin}`, pass: fraudLevel === 'High' },
-    { label: 'Affordability fail', value: `burden ${burden.toFixed(0)}%`, pass: affordability === 'FAIL' },
-    { label: 'Credit risk High', value: `PD ${pd.toFixed(1)}% > ${th.pdMedMax}%`, pass: creditLevel === 'High' },
-    { label: 'Insufficient reliable data', value: `confidence ${confidence.toFixed(0)} < ${th.confidenceFloor}${bothWeak ? ', bureau and cash-flow both weak' : ''}`, pass: bothWeak && confidence < th.confidenceFloor },
+    { label: 'Fraud risk is High', value: `${fraudScore.toFixed(0)} ≥ ${th.fraudHighMin}`, pass: fraudLevel === 'High' },
+    { label: 'Cannot afford the repayments', value: `burden ${burden.toFixed(0)}%`, pass: affordability === 'FAIL' },
+    { label: 'Credit risk is High', value: `PD ${pd.toFixed(1)}% > ${th.pdMedMax}%`, pass: creditLevel === 'High' },
+    { label: 'Not enough reliable data', value: `confidence ${confidence.toFixed(0)} < ${th.confidenceFloor}${bothWeak ? ', credit file and cash-flow both weak' : ''}`, pass: bothWeak && confidence < th.confidenceFloor },
   ]
 
   const stopped = !identityVerified
   let decision: Decision
   if (decline.some((r) => r.pass)) decision = 'Decline'
-  else if (stp.every((r) => r.pass)) decision = 'STP Approve'
-  else decision = 'Refer'
+  else if (stp.every((r) => r.pass)) decision = 'Approve'
+  else decision = 'Review'
 
   // 5. Explanation in plain language
   const positives: string[] = []
   const risks: string[] = []
-  if (identityVerified) positives.push('Identity verified'); else risks.push('Identity could not be verified')
-  if (fraudLevel === 'Low') positives.push('Low application-fraud risk'); else risks.push(`${fraudLevel} application-fraud risk (device, consistency or duplicate signals)`)
-  if (i.incomeConsistency >= 85) positives.push('Stable, consistent monthly inflows'); else if (i.incomeConsistency < 65) risks.push('Inconsistent income pattern')
-  if (i.recurringShare >= 85) positives.push('Recurring income dominates inflows')
-  if (i.platformIncome > 0 && i.incomeConsistency >= 70) positives.push('Recurring platform payouts observed')
-  if (i.ecommerceSales > 0) positives.push('Digital sales history visible')
-  if (i.cic === 'good') positives.push('Good bureau record and repayment history')
-  if (i.cic === 'none') risks.push('No bureau file: relies on cash-flow evidence')
-  if (i.cic === 'thin') risks.push('Limited bureau history')
-  if (i.cic === 'poor' || i.repayment === 'late') risks.push('Past late repayment on record')
-  if (dti < 0.15) positives.push('Low existing debt burden'); else if (burden > th.maxBurden) risks.push(`Total debt burden ${burden.toFixed(0)}% of income exceeds the ${th.maxBurden}% limit`)
-  if (affordability === 'PASS' && disposable > 0) positives.push('Instalment affordable after living costs')
-  if (i.dataCompleteness < 70) risks.push('Incomplete application data')
-  if (i.appConsistency < 70) risks.push('Declared and observed data do not match')
-  if (firstTimeBlock) risks.push('First-time borrower: policy requires human review and a conservative limit')
+  if (identityVerified) positives.push('Identity verified'); else risks.push('Identity could not be checked')
+  if (fraudLevel === 'Low') positives.push('Low application-fraud risk'); else risks.push(`${fraudLevel} application-fraud risk (device, mismatched details or repeat applications)`)
+  if (i.incomeConsistency >= 85) positives.push('Steady money coming in each month'); else if (i.incomeConsistency < 65) risks.push('Income goes up and down a lot')
+  if (i.recurringShare >= 85) positives.push('Most income repeats every month')
+  if (i.platformIncome > 0 && i.incomeConsistency >= 70) positives.push('Regular payouts from a work platform')
+  if (i.ecommerceSales > 0) positives.push('Online sales history can be seen')
+  if (i.cic === 'good') positives.push('Good credit record and repayment history')
+  if (i.cic === 'none') risks.push('No credit file: decision relies on cash-flow')
+  if (i.cic === 'thin') risks.push('Short credit history')
+  if (i.cic === 'poor' || i.repayment === 'late') risks.push('Late repayments in the past')
+  if (dti < 0.15) positives.push('Low existing debt'); else if (burden > th.maxBurden) risks.push(`Debt payments would be ${burden.toFixed(0)}% of income, above the ${th.maxBurden}% limit`)
+  if (affordability === 'PASS' && disposable > 0) positives.push('Monthly payment is affordable after living costs')
+  if (i.dataCompleteness < 70) risks.push('Application data is incomplete')
+  if (i.appConsistency < 70) risks.push('What the customer declared does not match what we see')
+  if (firstTimeBlock) risks.push('First-time borrower: policy requires a person to review and a low limit')
 
   let offer: Offer | null = null
   if (decision !== 'Decline') {
@@ -173,36 +175,36 @@ export function evaluate(s: Scenario, th: Thresholds, ec: Econ, ov: Overrides = 
     let n = note
     if (firstTimeBlock || creditLevel === 'Medium') {
       const cap = firstTimeBlock ? th.firstTimeCap : amount * 0.7
-      if (a > cap) { a = Math.floor(cap / 100_000) * 100_000; n = firstTimeBlock ? 'Conservative first-time limit applied by policy.' : 'Limit reduced by 30% because credit risk is Medium.' }
+      if (a > cap) { a = Math.floor(cap / 100_000) * 100_000; n = firstTimeBlock ? 'Low limit for first-time borrowers, set by policy.' : 'Limit cut by 30% because credit risk is Medium.' }
     }
     offer = { amount: a, tenure: offerTenure, apr, installment: a * annuity(apr, offerTenure), note: n }
   }
 
   let reason: string
-  if (decision === 'STP Approve') {
-    reason = `Approved automatically: identity is verified, fraud risk is low, the instalment is affordable and credit risk is low${i.cic === 'good' ? '.' : ', based on cash-flow behaviour despite limited bureau history.'} Model confidence ${confidence.toFixed(0)} is above the ${th.confidenceStp} threshold.`
-  } else if (decision === 'Refer') {
+  if (decision === 'Approve') {
+    reason = `Approved automatically. Identity is verified, fraud risk is low, the customer can afford the monthly payment and credit risk is low${i.cic === 'good' ? '.' : ', based on how money moves through the account, even with a short credit history.'} Confidence ${confidence.toFixed(0)} is above the ${th.confidenceStp} minimum.`
+  } else if (decision === 'Review') {
     const why: string[] = []
-    if (firstTimeBlock) why.push('policy requires a human decision for first-time borrowers')
+    if (firstTimeBlock) why.push('policy says a person must decide for first-time borrowers')
     if (creditLevel === 'Medium') why.push('credit risk is medium')
-    if (confidence < th.confidenceStp) why.push(`model confidence ${confidence.toFixed(0)} is below the ${th.confidenceStp} threshold`)
-    if (fraudLevel === 'Medium') why.push('fraud signals need a second look')
-    if (bothWeak) why.push('bureau and cash-flow evidence are both weak, so additional information is requested')
-    reason = `Referred to a credit officer because ${why.join(' and ') || 'conditions for straight-through approval are not all met'}. The officer receives the digital evidence pack, the indicative limit and the reasons above.`
+    if (confidence < th.confidenceStp) why.push(`confidence ${confidence.toFixed(0)} is below the ${th.confidenceStp} minimum`)
+    if (fraudLevel === 'Medium') why.push('some fraud signals need a second look')
+    if (bothWeak) why.push('the credit file and the cash-flow evidence are both weak, so we ask for more information')
+    reason = `Sent to a credit officer because ${why.join(' and ') || 'not every condition for automatic approval is met'}. The officer gets the digital evidence, a suggested limit and the reasons above.`
   } else {
     const why: string[] = []
-    if (!identityVerified) why.push('identity could not be verified, so processing stopped')
-    if (fraudLevel === 'High') why.push('application-fraud risk is high (this is a fraud decision, not a credit view)')
-    if (affordability === 'FAIL') why.push(`the instalment would take total debt to ${burden.toFixed(0)}% of income, above the ${th.maxBurden}% responsible-lending limit`)
-    if (creditLevel === 'High') why.push(`estimated default probability ${pd.toFixed(1)}% is above the ${th.pdMedMax}% policy limit`)
-    if (bothWeak && confidence < th.confidenceFloor) why.push('there is not enough reliable data to assess the application; the customer can resubmit with more information')
+    if (!identityVerified) why.push('identity could not be checked, so processing stopped')
+    if (fraudLevel === 'High') why.push('fraud risk is high (this is a fraud decision, not a view on credit)')
+    if (affordability === 'FAIL') why.push(`the new payment would take total debt payments to ${burden.toFixed(0)}% of income, above the ${th.maxBurden}% limit`)
+    if (creditLevel === 'High') why.push(`the estimated chance of default, ${pd.toFixed(1)}%, is above the ${th.pdMedMax}% limit`)
+    if (bothWeak && confidence < th.confidenceFloor) why.push('there is not enough reliable data; the customer can apply again with more information')
     reason = `Declined because ${why.join('; ')}.`
   }
 
   return {
     identityVerified, fraudScore, fraudLevel, pd, creditLevel, affordability, burden, disposable, installment,
     cicCoverage, cashflowStrength, bothWeak, confidence, confidenceLevel, decision,
-    humanReview: decision === 'Refer', stopped, offer, positives, risks, reason, rules: { stp, refer, decline },
+    humanReview: decision === 'Review', stopped, offer, positives, risks, reason, rules: { stp, refer, decline },
   }
 }
 

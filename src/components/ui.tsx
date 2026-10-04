@@ -57,12 +57,12 @@ export function ScreenHeader({ n, title, question, children }: { n: number; titl
 }
 
 const DEC: Record<Decision, string> = {
-  'STP Approve': 'bg-ok-600 text-white',
-  Refer: 'bg-warn-600 text-white',
+  'Approve': 'bg-ok-600 text-white',
+  Review: 'bg-warn-600 text-white',
   Decline: 'bg-hred-600 text-white',
 }
 export function DecisionBadge({ d, big }: { d: Decision; big?: boolean }) {
-  const label = d === 'STP Approve' ? 'STP APPROVE' : d === 'Refer' ? 'REFER TO HUMAN' : 'DECLINE'
+  const label = d === 'Approve' ? 'APPROVE' : d === 'Review' ? 'REVIEW' : 'DECLINE'
   return <span className={`inline-block rounded-md font-semibold tracking-wide ${DEC[d]} ${big ? 'px-4 py-2 text-base' : 'px-2.5 py-1 text-xs'}`}>{label}</span>
 }
 
