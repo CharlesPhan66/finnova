@@ -27,7 +27,7 @@ export function CurrentProcess() {
 
   return (
     <div>
-      <ScreenHeader n={2} title="Current process simulator" question="Why does today's process take days, and why does a fixed per-application cost hurt most on small tickets?" />
+      <ScreenHeader n="Overview · part 2" title="Current process simulator" question="Why does today's process take days, and why does a fixed per-application cost hurt most on small tickets?" />
       <div className="grid gap-4 lg:grid-cols-5">
         <Card className="lg:col-span-3" title="Decision timeline" sub="Where the days go in centralized manual review" right={<Tag kind="case" text="RANGE: CASE FACT" />}>
           <Slider label="Decision TAT for this application" tip="The case gives a range of 1.8 to 4.6 business days. Where one application lands inside the range is a simulation input." value={tat} min={CASE.tatMinDays} max={CASE.tatMaxDays} step={0.1} onChange={setTat} fmt={(n) => `${n.toFixed(1)} days`} kind="sim" />

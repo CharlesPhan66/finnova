@@ -63,7 +63,7 @@ export function Hero() {
 
   return (
     <div>
-      <ScreenHeader n={1} title="Baseline vs Proposed underwriting" question="The bottleneck is not that approval is slow. A document-centric manual process cannot use the digital cash-flow and behavioural data that already exists for customers with little credit history.">
+      <ScreenHeader n="Overview · part 1" title="Baseline vs Proposed underwriting" question="The bottleneck is not that approval is slow. A document-centric manual process cannot use the digital cash-flow and behavioural data that already exists for customers with little credit history.">
         <button onClick={run} className="rounded-md bg-navy-900 px-4 py-2 text-sm font-semibold text-white hover:bg-navy-800">{play ? 'Playing…' : 'Play both journeys'}</button>
       </ScreenHeader>
 

@@ -2,8 +2,7 @@ import { createContext, useContext, useMemo, useState, type ReactNode } from 're
 import { DEFAULT_ECON, DEFAULT_THRESHOLDS, SCENARIOS, type Econ, type Scenario, type Thresholds } from './data'
 import { evaluate, type Overrides, type Result } from './engine'
 
-export type ScreenId =
-  | 'hero' | 'current' | 'scenarios' | 'engine' | 'logic' | 'whyai' | 'risk' | 'el' | 'impact' | 'monitor' | 'data' | 'qa'
+export type ScreenId = 'overview' | 'scenarios' | 'impact'
 
 interface Store {
   screen: ScreenId
@@ -24,7 +23,7 @@ interface Store {
 const Ctx = createContext<Store | null>(null)
 
 export function StoreProvider({ children }: { children: ReactNode }) {
-  const [screen, setScreen] = useState<ScreenId>('hero')
+  const [screen, setScreen] = useState<ScreenId>('overview')
   const [scenarioId, setScenarioId] = useState('C')
   const [th, setTh] = useState<Thresholds>(DEFAULT_THRESHOLDS)
   const [ec, setEc] = useState<Econ>(DEFAULT_ECON)
