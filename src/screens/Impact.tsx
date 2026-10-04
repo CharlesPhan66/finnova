@@ -33,7 +33,7 @@ function breakeven(p: P, funding: number, lgd: number): number | null {
 
 export function Impact() {
   const { ec, setEc } = useStore()
-  const [amount, setAmount] = useState(10_000_000)
+  const [amount, setAmount] = useState(12_000_000)
   const [apr, setApr] = useState(18)
   const [n, setN] = useState(1000)
   const [appC, setAppC] = useState(40)
@@ -46,7 +46,7 @@ export function Impact() {
 
   const resetAll = () => {
     setEc(DEFAULT_ECON)
-    setAmount(10_000_000); setApr(18); setN(1000)
+    setAmount(12_000_000); setApr(18); setN(1000)
     setAppC(40); setAppP(52); setConvC(55); setConvP(75); setStp(40); setDefC(4); setDefP(4.5)
   }
 

@@ -31,7 +31,7 @@ const NAV: { id: ScreenId; label: string }[] = [
 
 const DEMO: { screen: ScreenId; scenario?: string; title: string; say: string }[] = [
   { screen: 'hero', title: '1. The mechanism', say: 'Same customer, two journeys. Today: documents, manual checks, 1.8–4.6 days, 380K. Proposed: consent, digital data, engine, near-real-time.' },
-  { screen: 'current', scenario: 'C', title: '2. Why today is costly', say: 'Pick a small loan. The fixed 380K is a large share of principal, and a gig worker has little a document review can use.' },
+  { screen: 'current', scenario: 'C', title: '2. Why today is costly', say: 'Tap the 2M chip. The fixed 380K is a large share of principal, and a gig worker has little a document review can use.' },
   { screen: 'scenarios', scenario: 'C', title: '3. Gig worker, both ways', say: 'Tap through the phone at your own pace. Current treatment likely declines; proposed uses platform cash-flow and approves automatically.' },
   { screen: 'engine', scenario: 'C', title: '4. Inside the engine', say: 'Identity, fraud and credit risk are separate. Repayment ability and confidence decide if it can be approved automatically.' },
   { screen: 'impact', title: '5. Economics', say: 'Cost per application and contribution, current vs proposed. Move the cost slider to show sensitivity.' },
@@ -64,7 +64,7 @@ function Shell() {
             </span>
             <div className="leading-tight">
               <h1 className="text-sm font-semibold sm:text-base">Point-of-Purchase Underwriting Simulation</h1>
-              <p className="hidden text-[11px] text-sky-200 sm:block">Business Challenge 2026 · HLBVN case · simulated data only, not HLBVN results</p>
+              <p className="hidden text-[11px] text-sky-200 sm:block">By Team Finnova · Business Challenge 2026 · HLBVN case · simulated data only, not HLBVN results</p>
             </div>
           </div>
           <div className="ml-auto flex gap-2">
@@ -91,7 +91,7 @@ function Shell() {
         <main className={`min-w-0 flex-1 px-4 py-5 sm:px-6 ${demo !== null ? 'pb-40' : 'pb-10'}`}>
           <Active />
           <footer className="mt-10 border-t border-sky-200 pt-4 text-[11px] text-slate-500">
-            Prototype for the Business Challenge 2026. All customers, numbers and outputs are simulated locally in your browser unless labelled CASE FACT. Not an HLBVN system, policy or result.
+            By Team Finnova. Prototype for the Business Challenge 2026. All customers, numbers and outputs are simulated locally in your browser unless labelled CASE FACT. Not an HLBVN system, policy or result.
           </footer>
         </main>
       </div>

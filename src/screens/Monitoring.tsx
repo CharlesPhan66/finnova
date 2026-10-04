@@ -13,7 +13,7 @@ const METRICS: M[] = [
   { k: 'Manual review rate', unit: '%', base: 22, amber: 30, red: 38, dir: 'high', tip: 'Share of applications sent to a credit officer.', fraud: 1.5, drift: 1.3, d: 0 },
   { k: 'Decision TAT', unit: 'min', base: 5, amber: 10, red: 20, dir: 'high', tip: 'Typical time to reach a decision for automatic applications.', fraud: 1.2, d: 1 },
   { k: 'Default rate', unit: '%', base: 4.5, amber: 5.5, red: 7, dir: 'high', tip: 'Customers who stop paying early, among newly approved loans.', drift: 1.4, d: 1 },
-  { k: 'NPL ratio', unit: '%', base: 2.8, amber: 3.5, red: 5, dir: 'high', tip: 'Bad loans as a share of all loans.', drift: 1.3, d: 1 },
+  { k: 'NPL ratio', unit: '%', base: 2.8, amber: 3.7, red: 5, dir: 'high', tip: 'Bad loans as a share of all loans. Amber starts at about the consumer-credit market level of 3.7% quoted on the one-pager.', drift: 1.3, d: 1 },
   { k: 'Expected loss', unit: '% paid out', base: 1.7, amber: 2.0, red: 3.0, dir: 'high', tip: 'Compared with the loss limit set on screen 8.', drift: 1.5, d: 2 },
   { k: 'Fraud rate', unit: '% of apps', base: 0.6, amber: 0.9, red: 1.5, dir: 'high', tip: 'Applications confirmed as fraud.', fraud: 3, d: 2 },
   { k: 'False positives', unit: '% good declined', base: 1.8, amber: 2.5, red: 4, dir: 'high', tip: 'Good customers wrongly declined by fraud or credit rules.', fraud: 1.5, d: 1 },
