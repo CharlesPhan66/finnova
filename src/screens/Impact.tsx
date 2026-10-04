@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import { Bar, BarChart, CartesianGrid, Cell, Legend, ResponsiveContainer, Tooltip as RTip, XAxis, YAxis } from 'recharts'
 import { Card, Metric, ScreenHeader, Slider, Tag, Tip } from '../components/ui'
-import { CASE, type Kind } from '../lib/data'
+import { CASE, DEFAULT_ECON, type Kind } from '../lib/data'
 import { contribution } from '../lib/engine'
 import { vnd } from '../lib/format'
 import { useStore } from '../lib/store'
@@ -65,7 +65,7 @@ export function Impact() {
   ]
 
   const rows: [string, ReactNode, ReactNode, Kind, string][] = [
-    ['Decision TAT', `${CASE.tatMinDays}–${CASE.tatMaxDays} business days`, `Minutes (assumed ${ec.proposedMinutes} min)`, 'assumption', 'Current is the case fact range. Proposed is an adjustable assumption, not an HLBVN target.'],
+    ['Decision TAT', `${CASE.tatMinDays}–${CASE.tatMaxDays} business days`, `Under ${ec.proposedMinutes} minutes (target)`, 'assumption', 'Current is the case fact range. Proposed is an adjustable assumption, not an HLBVN target.'],
     ['Cost per application', `${vnd(c.processing / n)} VND`, `${vnd(costP)} VND`, 'assumption', 'Current = case benchmark. Proposed = automated cost X + review share × reduced review cost.'],
     ['Automatic decision rate (STP)', '0% (all manually reviewed)', `${stpEff}%`, 'assumption', 'Share of applications decided with no person involved.'],
     ['Manual review rate', '100%', `${reviewP}%`, 'sim', 'Approved after review (approval − STP) plus 10 points sent to review then declined. Assumption-driven.'],
@@ -80,13 +80,13 @@ export function Impact() {
   return (
     <div>
       <ScreenHeader n={9} title="Impact and unit economics" question="For small-ticket lending, a fixed manual review cost can consume most of the loan economics. What changes when cost and time fall, with risk still controlled?">
-        <button onClick={() => setEc({ ...ec, proposedCost: 60_000 })} className="rounded border border-sky-200 bg-white px-3 py-1.5 text-xs hover:bg-sky-50">Reset cost X</button>
+        <button onClick={() => setEc({ ...ec, proposedCost: DEFAULT_ECON.proposedCost })} className="rounded border border-sky-200 bg-white px-3 py-1.5 text-xs hover:bg-sky-50">Reset cost X</button>
       </ScreenHeader>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Metric label="Contribution per application" value={`${vnd(c.perApp)} → ${vnd(p.perApp)}`} tag="sim" tone={p.perApp >= 0 ? 'green' : 'red'} tip="Contribution ÷ applications, current then proposed." />
         <Metric label="Cost per application" value={`${vnd(CASE.costPerApp)} → ${vnd(costP)}`} tag="assumption" tip="380K is the case benchmark; the proposed figure is an assumption." />
-        <Metric label="Cost reduction" value={`${((1 - costP / CASE.costPerApp) * 100).toFixed(0)}%`} tag="sim" tone="green" />
+        <Metric label="Cost reduction" value={`${((1 - costP / CASE.costPerApp) * 100).toFixed(0)}%`} tag="sim" tone="green" sub="Target: 65% (about 133K per application)" tip="Target from the one-pager: average cost per application falls 65% from the 380K benchmark. The automated cost X is set so the default matches this target." />
         <Metric label="Break-even average ticket" value={`${beC ? vnd(beC) : '> 90.1M'} → ${beP ? vnd(beP) : '> 90.1M'}`} tag="sim" tip="Smallest average loan size at which total contribution is not negative, with the sliders as set." sub="Current → proposed" />
       </div>
 

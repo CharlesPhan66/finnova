@@ -171,7 +171,7 @@ export interface Econ {
 }
 
 export const DEFAULT_ECON: Econ = {
-  proposedCost: 60_000,
+  proposedCost: 91_000,
   reviewCostPct: 50,
   proposedMinutes: 5,
   aprLow: 16,

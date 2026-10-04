@@ -92,7 +92,7 @@ export function Scenarios() {
               </Pane>
               <Pane title="Proposed: decision" tone="blue">
                 <DecisionBadge d={r.decision} big />
-                <p className="mt-1 text-xs text-slate-600">in about {ec.proposedMinutes} minutes <Tag kind="assumption" /></p>
+                <p className="mt-1 text-xs text-slate-600">in under {ec.proposedMinutes} minutes <Tag kind="assumption" /></p>
                 <p className="mt-2 text-xs text-slate-700">{r.reason}</p>
               </Pane>
             </div>
@@ -138,7 +138,7 @@ export function Scenarios() {
       <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Metric label="Current decision" value={s.current.outcome} tone={curBad ? 'red' : 'green'} tag="sim" />
         <Metric label="Proposed decision" value={r.decision === 'Approve' ? 'Approve' : r.decision === 'Review' ? 'Review' : 'Decline'} tone={r.decision === 'Approve' ? 'green' : r.decision === 'Review' ? 'amber' : 'red'} tag="sim" />
-        <Metric label="Time to decision" value={`${s.current.tatDays.toFixed(1)} d → ~${ec.proposedMinutes} min`} tag="sim" />
+        <Metric label="Time to decision" value={`${s.current.tatDays.toFixed(1)} d → < ${ec.proposedMinutes} min`} tag="sim" />
         <Metric label="Unit cost" value={`380K → ${vnd(r.decision === 'Review' ? ec.proposedCost + CASE.costPerApp * ec.reviewCostPct / 100 : ec.proposedCost)}`} tag="assumption" tip="Current cost is the case benchmark. Proposed cost is an adjustable team assumption (Impact screen)." />
       </div>
     </div>

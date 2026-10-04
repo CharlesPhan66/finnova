@@ -87,7 +87,7 @@ export function Hero() {
           <div className={`mt-4 grid grid-cols-2 gap-3 transition-opacity ${step >= 7 ? 'opacity-100' : 'opacity-30'}`}>
             <div className="rounded-lg bg-sky-100 p-3 text-center">
               <p className="text-2xl font-bold text-navy-800">Near-real-time</p>
-              <p className="text-xs text-slate-600">Minutes, not days · assumed {ec.proposedMinutes} min <Tag kind="assumption" /></p>
+              <p className="text-xs text-slate-600">Minutes, not days · target under {ec.proposedMinutes} minutes <Tag kind="assumption" /></p>
             </div>
             <div className="rounded-lg bg-sky-100 p-3 text-center">
               <p className="text-2xl font-bold text-navy-800">Automated</p>

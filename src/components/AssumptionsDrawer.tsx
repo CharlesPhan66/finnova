@@ -10,9 +10,9 @@ export function AssumptionsDrawer() {
   const assumptions: AssumptionItem[] = [
     { kind: 'assumption', label: 'Scorecard weights (chance of default)', value: 'Base 3%, multipliers for credit file, late payments, income steadiness, debt and loan size. Illustrative weights. To be re-estimated on the Round 3 dataset.' },
     { kind: 'assumption', label: 'Fraud loss in scenario F', value: 'If fraud gets through, the whole loan amount is assumed lost (no recovery).', note: 'Used only to show the risk of the current process' },
-    { kind: 'assumption', label: 'Proposed automated processing cost (X)', value: vndFull(ec.proposedCost), note: 'Adjustable on Impact screen' },
+    { kind: 'assumption', label: 'Proposed automated processing cost (X)', value: vndFull(ec.proposedCost), note: 'Default set so the average cost per application is about 133K, a 65% cut from 380K (one-pager target). Adjustable on the Impact screen.' },
     { kind: 'assumption', label: 'Review cost, % of current manual cost', value: `${ec.reviewCostPct}%` },
-    { kind: 'assumption', label: 'Proposed decision time', value: `${ec.proposedMinutes} minutes (shown as "minutes / near-real-time")`, note: 'Not an HLBVN target' },
+    { kind: 'assumption', label: 'Proposed decision time', value: `Under ${ec.proposedMinutes} minutes (shown as "minutes / near-real-time")`, note: 'Team target from the one-pager, not an HLBVN target' },
     { kind: 'assumption', label: 'Illustrative policy thresholds', value: `Automatic-approval confidence ≥ ${th.confidenceStp} · data floor ${th.confidenceFloor} · PD low ≤ ${th.pdLowMax}% · PD medium ≤ ${th.pdMedMax}% · fraud low ≤ ${th.fraudLowMax} · fraud high ≥ ${th.fraudHighMin} · identity ≥ ${th.identityMin} · max debt burden ${th.maxBurden}%` },
     { kind: 'assumption', label: 'First-time borrower rule', value: `${th.firstTimeNoStp ? 'No automatic approval' : 'Automatic approval allowed'}; low limit ${vndFull(th.firstTimeCap)}` },
     { kind: 'assumption', label: 'Indicative pricing (APR)', value: `Low risk ${ec.aprLow}% · Medium risk ${ec.aprMed}%` },
