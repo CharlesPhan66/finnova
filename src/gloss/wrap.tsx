@@ -6,7 +6,7 @@ import { Gloss } from './Gloss'
 const TEXT_TAGS = new Set(['p', 'li', 'td', 'th', 'span', 'h1', 'h2', 'h3', 'h4', 'dt', 'dd', 'label', 'b', 'strong', 'legend', 'button', 'div', 'summary'])
 
 export function wrapProps(type: unknown, props: Record<string, unknown>): Record<string, unknown> {
-  if (typeof type !== 'string' || !TEXT_TAGS.has(type) || props.children == null) return props
+  if (typeof type !== 'string' || !TEXT_TAGS.has(type) || props.children == null || props.role === 'tooltip') return props
   const kids = props.children as ReactNode
   const mapped = typeof kids === 'string'
     ? <Gloss text={kids} />

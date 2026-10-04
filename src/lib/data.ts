@@ -87,7 +87,7 @@ export const SCENARIOS: Scenario[] = [
   {
     id: 'C', name: 'Gig / platform worker', short: 'Gig worker', segment: 'Gig / platform workers', firstTime: false,
     blurb: 'Weekly platform payouts, high transaction activity, no payslip.',
-    requested: 8_000_000, tenure: 12,
+    requested: 8_000_000, tenure: 9,
     inputs: { ...base, cic: 'thin', repayment: 'none', monthlyIncome: 12_000_000, existingDebtMonthly: 500_000, identityMatch: 95, incomeConsistency: 80, recurringShare: 88, expenseRatio: 50, platformIncome: 9_500_000, ewalletActivity: 85, txPerMonth: 180, deviceRisk: 15, appConsistency: 93, dataCompleteness: 90 },
     docs: 'No payslip or labour contract: limited',
     current: { outcome: 'Likely decline', tatDays: 4.3, why: 'Income is real but not documented in a form the officer can verify, so the file is slow and usually fails the document test.' },
@@ -95,7 +95,7 @@ export const SCENARIOS: Scenario[] = [
   {
     id: 'D', name: 'Online merchant', short: 'Online merchant', segment: 'Online merchants (MSME)', firstTime: false,
     blurb: 'Recurring digital sales on marketplaces, seasonal swings.',
-    requested: 30_000_000, tenure: 12,
+    requested: 20_000_000, tenure: 12,
     inputs: { ...base, cic: 'thin', repayment: 'none', monthlyIncome: 38_000_000, existingDebtMonthly: 3_000_000, identityMatch: 94, incomeConsistency: 66, recurringShare: 74, expenseRatio: 62, ecommerceSales: 52_000_000, ewalletActivity: 78, txPerMonth: 240, deviceRisk: 18, appConsistency: 90, dataCompleteness: 86 },
     docs: 'Business registration only; no audited accounts',
     current: { outcome: 'Likely decline', tatDays: 4.6, why: 'Digital sales are not accepted as evidence; the file needs business accounts the merchant does not have.' },
@@ -103,7 +103,7 @@ export const SCENARIOS: Scenario[] = [
   {
     id: 'E', name: 'First-time digital borrower', short: 'First-time borrower', segment: 'First-time borrowers', firstTime: true,
     blurb: 'No bureau file, light wallet and telecom footprint, high uncertainty.',
-    requested: 10_000_000, tenure: 12,
+    requested: 10_000_000, tenure: 9,
     inputs: { ...base, cic: 'none', repayment: 'none', monthlyIncome: 9_000_000, identityMatch: 93, incomeConsistency: 70, recurringShare: 72, expenseRatio: 58, ewalletActivity: 66, txPerMonth: 45, deviceRisk: 22, appConsistency: 86, dataCompleteness: 74 },
     docs: 'ID only; income unverified',
     current: { outcome: 'Decline', tatDays: 3.9, why: 'No history and no documents: nothing for the officer to underwrite on.' },
@@ -111,7 +111,7 @@ export const SCENARIOS: Scenario[] = [
   {
     id: 'F', name: 'Fraudulent application', short: 'Suspicious application', segment: 'Salaried with credit history', firstTime: false,
     blurb: 'Looks creditworthy on paper, but device and behaviour signals are wrong.',
-    requested: 40_000_000, tenure: 12,
+    requested: 20_000_000, tenure: 12,
     inputs: { ...base, monthlyIncome: 30_000_000, identityMatch: 90, incomeConsistency: 90, recurringShare: 92, expenseRatio: 45, deviceRisk: 88, appConsistency: 40, duplicateSignals: 3, dataCompleteness: 95 },
     docs: 'Payslips look complete (possibly forged)',
     current: { outcome: 'Approve (fraud missed)', tatDays: 2.4, why: 'The pack looks complete. Device, duplicate-application and behaviour signals are not part of a document review.' },
@@ -119,7 +119,7 @@ export const SCENARIOS: Scenario[] = [
   {
     id: 'G', name: 'Strong income, poor affordability', short: 'Over-indebted', segment: 'Salaried with credit history', firstTime: false,
     blurb: 'High income but most of it already committed to existing debt.',
-    requested: 60_000_000, tenure: 12,
+    requested: 20_000_000, tenure: 12,
     inputs: { ...base, monthlyIncome: 45_000_000, existingDebtMonthly: 20_000_000, repayment: 'late', identityMatch: 97, incomeConsistency: 92, recurringShare: 94, expenseRatio: 50, deviceRisk: 10, appConsistency: 95, dataCompleteness: 96 },
     docs: 'Complete',
     current: { outcome: 'Decline', tatDays: 2.1, why: 'Declined after review, but the full 380K was already spent to reach a no.' },

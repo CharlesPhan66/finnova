@@ -14,7 +14,7 @@ export function WhyAI() {
 
       <Card title="Decision engine = scorecard + policy rules + human review">
         <div className="grid items-stretch gap-3 md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr]">
-          <div className="rounded-xl border-2 border-navy-600 bg-sky-50 p-3"><p className="text-sm font-bold text-navy-900">Scorecard</p><p className="mt-1 text-xs text-slate-600">Turns many signals into a chance of default and a confidence level. Simple and easy to explain.</p></div>
+          <div className="rounded-xl border-2 border-navy-600 bg-sky-50 p-3"><p className="text-sm font-bold text-navy-900">Scorecard <span className="font-normal text-slate-500">(champion)</span></p><p className="mt-1 text-xs text-slate-600">The current decision model. Turns many signals into a chance of default and a confidence level. Simple and easy to explain.</p></div>
           <span className="self-center text-center text-xl font-bold text-navy-700">+</span>
           <div className="rounded-xl border-2 border-navy-600 bg-sky-50 p-3"><p className="text-sm font-bold text-navy-900">Policy rules</p><p className="mt-1 text-xs text-slate-600">Hard limits: identity, fraud block, ability to repay, maximum exposure, regulation.</p></div>
           <span className="self-center text-center text-xl font-bold text-navy-700">+</span>
@@ -26,7 +26,7 @@ export function WhyAI() {
       </Card>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
-        <Card title="AI is the challenger (shadow mode)" right={<Tag kind="assumption" text="PROPOSED" />}>
+        <Card title="AI model is the challenger (runs in parallel)" right={<Tag kind="assumption" text="PROPOSED" />}>
           <ol className="space-y-2 text-sm text-slate-700">
             <li><b>1.</b> The AI model scores the same applications as the scorecard, in the background.</li>
             <li><b>2.</b> Its score is not used for any decision. It is only compared with the scorecard.</li>

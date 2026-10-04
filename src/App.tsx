@@ -64,7 +64,7 @@ function Shell() {
             </span>
             <div className="leading-tight">
               <h1 className="text-sm font-semibold sm:text-base">Point-of-Purchase Underwriting Simulation</h1>
-              <p className="hidden text-[11px] text-sky-200 sm:block">Business Challenge 2026 · HLBVN case · simulated data only, not HLBVN results</p>
+              <p className="hidden text-[11px] text-sky-200 sm:block">By Team Finnova · Business Challenge 2026 · HLBVN case · simulated data only, not HLBVN results</p>
             </div>
           </div>
           <div className="ml-auto flex gap-2">
@@ -91,7 +91,7 @@ function Shell() {
         <main className={`min-w-0 flex-1 px-4 py-5 sm:px-6 ${demo !== null ? 'pb-40' : 'pb-10'}`}>
           <Active />
           <footer className="mt-10 border-t border-sky-200 pt-4 text-[11px] text-slate-500">
-            Prototype for the Business Challenge 2026. All customers, numbers and outputs are simulated locally in your browser unless labelled CASE FACT. Not an HLBVN system, policy or result.
+            By Team Finnova. Prototype for the Business Challenge 2026. All customers, numbers and outputs are simulated locally in your browser unless labelled CASE FACT. Not an HLBVN system, policy or result.
           </footer>
         </main>
       </div>

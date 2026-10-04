@@ -1,5 +1,7 @@
 # Point-of-Purchase Underwriting Simulation
 
+By Team Finnova.
+
 Interactive, fully client-side simulation for the Business Challenge 2026 (HLBVN case): document-centric manual underwriting versus real-time, data-driven underwriting (illustrative scorecard + policy rules + human review, with AI as a shadow challenger).
 
 All customers and outputs are simulated locally. Numbers are labelled CASE FACT, TEAM ASSUMPTION or SIMULATION. Nothing here is an HLBVN result, target or policy.
